@@ -32,6 +32,11 @@ public class MySqlExceptionHandler {
             log.error("[DataIntegrityViolationException] " + message);
             return Result.error().message(message);
         }
+        if (ex.getMessage().trim().startsWith("### Error updating database.  Cause: java.sql.SQLException: Field 'role' doesn't have a default value")) {
+            String message = ex.getMessage().split(":")[2].split("###")[0] + " 该属性不符合非空约束，请确保其不为空";
+            log.error("[DataIntegrityViolationException] " + message);
+            return Result.error().message(message);
+        }
         ex.printStackTrace();   // 未知错误
         return Result.error().message(ex.getMessage());
     }
