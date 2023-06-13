@@ -1,6 +1,4 @@
-package com.example.onlinejudge.common.constant;
-
-import lombok.Data;
+package com.example.onlinejudge.constant;
 
 /**
  * 角色

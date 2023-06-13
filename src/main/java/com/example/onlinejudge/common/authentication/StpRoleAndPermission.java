@@ -1,7 +1,7 @@
 package com.example.onlinejudge.common.authentication;
 
 import cn.dev33.satoken.stp.StpInterface;
-import com.example.onlinejudge.common.constant.Role;
+import com.example.onlinejudge.constant.Role;
 import com.example.onlinejudge.entity.User;
 import com.example.onlinejudge.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

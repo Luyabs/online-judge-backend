@@ -1,9 +1,7 @@
 package com.example.onlinejudge;
 
-import com.example.onlinejudge.common.Result;
 import com.example.onlinejudge.common.authentication.StpRoleAndPermission;
-import com.example.onlinejudge.common.constant.ProblemDifficulty;
-import com.example.onlinejudge.controller.UserController;
+import com.example.onlinejudge.constant.ProblemDifficulty;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

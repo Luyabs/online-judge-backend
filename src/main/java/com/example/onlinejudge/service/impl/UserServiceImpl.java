@@ -3,7 +3,7 @@ package com.example.onlinejudge.service.impl;
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.example.onlinejudge.common.constant.Role;
+import com.example.onlinejudge.constant.Role;
 import com.example.onlinejudge.common.exception.exception.NotExistException;
 import com.example.onlinejudge.entity.User;
 import com.example.onlinejudge.mapper.UserMapper;

@@ -1,4 +1,4 @@
-package com.example.onlinejudge.common.constant;
+package com.example.onlinejudge.constant;
 
 /**
  * 题目修改动作
