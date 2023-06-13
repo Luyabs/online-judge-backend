@@ -18,7 +18,7 @@ import java.util.Arrays;
 @Aspect
 @Component
 public class LogAspect {
-    @Pointcut("@annotation(Log)")   //execution(* com.example.abs.service.*Service.*(..))
+    @Pointcut("execution(* com.example.onlinejudge.service.*Service.*(..))")   // @annotation(Log)
     private void printLogMethod() {
         /*do nothing*/
     }

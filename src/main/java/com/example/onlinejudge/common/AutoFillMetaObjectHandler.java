@@ -14,9 +14,9 @@ import java.time.LocalDateTime;
 public class AutoFillMetaObjectHandler implements MetaObjectHandler {
     @Override
     public void insertFill(MetaObject metaObject) {
-        metaObject.setValue("createTime", LocalDateTime.now());
+        metaObject.setValue("insertTime", LocalDateTime.now());
 //        if (UserInfo.get() != null)
-//            metaObject.setValue("createUser", UserInfo.get());
+//            metaObject.setValue("insertUser", UserInfo.get());
         updateFill(metaObject);
     }
 

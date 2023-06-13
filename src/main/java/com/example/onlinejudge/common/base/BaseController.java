@@ -6,6 +6,8 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.Serializable;
+
 /**
  * Controller公共类
  * @param <T> 实体类型
@@ -35,7 +37,7 @@ public abstract class BaseController<T> {
 
     @ApiOperation(value = "按id获取", notes = "需传入id")
     @GetMapping("/{id}")
-    public Result getById(@PathVariable int id) {
+    public Result getById(@PathVariable Serializable id) {
         T entity = baseService.getByIdNotNull(id);
         return entity != null ? Result.success().data("one", entity) : Result.error().message("不存在id: " + id);
     }
@@ -56,7 +58,7 @@ public abstract class BaseController<T> {
 
     @ApiOperation(value = "删除", notes = "需要传入路径变量id")
     @DeleteMapping("/{id}")
-    public Result remove(@PathVariable int id) {
+    public Result remove(@PathVariable Serializable id) {
         boolean flag = baseService.removeByIdNotNull(id);
         return flag ? Result.success().message("删除成功") : Result.error().message("不存在id: " + id);
     }
