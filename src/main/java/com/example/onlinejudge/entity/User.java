@@ -28,6 +28,11 @@ public class User {
     private Long userId;
 
     /**
+     * 权限
+     */
+    private Integer role;
+
+    /**
      * 账户名
      */
     private String username;

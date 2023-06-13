@@ -3,6 +3,7 @@ package com.example.onlinejudge.service.impl;
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.example.onlinejudge.common.constant.Role;
 import com.example.onlinejudge.common.exception.exception.NotExistException;
 import com.example.onlinejudge.entity.User;
 import com.example.onlinejudge.mapper.UserMapper;
@@ -54,7 +55,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
         map.put("id", user.getUserId());
         map.put("name", user.getUsername());
         map.put("avatar", "https://panjiachen.gitee.io/vue-element-admin-site/home.png");
-        map.put("roles", user.getUsername().equals("admin") ? new String[]{"admin"} : new String[]{"normal_user"});
+        map.put("roles", Role.getRole(user.getRole()).getRoleName());
         return map;
     }
 }
