@@ -11,7 +11,7 @@ import springfox.documentation.spring.web.plugins.Docket;
 
 /**
  * 封装的Swagger文档
- * http://localhost:8080/doc.html
+ * <a href="http://localhost:8080/doc.html">戳我跳转到swagger文档</a>
  */
 @Configuration
 public class Knife4jConfig {
@@ -19,9 +19,9 @@ public class Knife4jConfig {
     public Docket defaultApi2() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(new ApiInfoBuilder()
-                        .title("abcdefg Api文档")
+                        .title("Online Judge Api文档")
                         .description("# swagger-bootstrap-ui-demo RESTful APIs")
-                        .contact(new Contact("abcdefg", "https://1", "1"))
+                        .contact(new Contact("Online Judge", "https://github.com/Luyabs/online-judge-backend", "luy@shu.edu.cn"))
                         .version("1.0")
                         .termsOfServiceUrl("http://localhost:8080/")
                         .build())
