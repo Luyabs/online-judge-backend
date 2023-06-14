@@ -35,7 +35,7 @@ public class StpRoleAndPermission implements StpInterface {
     public List<String> getRoleList(Object loginId, String loginType) {
         List<String> list = new ArrayList<>();
         User user = userService.getByIdNotNull((Serializable) loginId);
-        list.add(Role.getRole(user.getRole()).getRoleName());
+        list.add(Role.get(user.getRole()).getRoleName());
         return list;
     }
 }

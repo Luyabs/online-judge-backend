@@ -3,7 +3,7 @@ package com.example.onlinejudge.constant;
 /**
  * 题目修难度
  */
-public enum ProblemDifficulty {
+public enum ProblemDifficulty implements EnumIndex {
     NULL("null"),
     EASY("简单"),
     MEDIUM("中等"),
@@ -15,21 +15,22 @@ public enum ProblemDifficulty {
         this.difficulty = difficulty;
     }
 
-    public String getRoleName() {
+    public String getDifficulty() {
         return difficulty;
     }
 
-    public static ProblemDifficulty getProblemDifficulty(int index) {
+    public static ProblemDifficulty get(int index) {
         return switch (index) {
-            case 1 -> ProblemDifficulty.EASY;
-            case 2 -> ProblemDifficulty.MEDIUM;
-            case 3 -> ProblemDifficulty.HARD;
-            default -> ProblemDifficulty.NULL;
+            case 1 -> EASY;
+            case 2 -> MEDIUM;
+            case 3 -> HARD;
+            default -> NULL;
         };
     }
 
-    public static int getIndex(ProblemDifficulty type) {
-        return switch (type) {
+    @Override
+    public int index() {
+        return switch (this) {
             case EASY -> 1;
             case MEDIUM -> 2;
             case HARD -> 3;

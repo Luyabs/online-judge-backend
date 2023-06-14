@@ -1,5 +1,7 @@
 package com.example.onlinejudge.controller;
 
+import com.example.onlinejudge.common.base.BaseController;
+import com.example.onlinejudge.entity.EditRecord;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,6 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/editRecord")
-public class EditRecordController {
+public class EditRecordController extends BaseController<EditRecord> {
 
 }

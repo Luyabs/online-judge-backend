@@ -3,7 +3,7 @@ package com.example.onlinejudge.constant;
 /**
  * 题目类型
  */
-public enum ProblemType {
+public enum ProblemType implements EnumIndex {
     NULL("null"),
     SQL("SQL题"),
     PROGRAM("高级语言程序");
@@ -14,20 +14,21 @@ public enum ProblemType {
         this.typeName = typeName;
     }
 
-    public String getRoleName() {
+    public String getTypeName() {
         return typeName;
     }
 
-    public static ProblemType getProblemType(int index) {
+    public static ProblemType get(int index) {
         return switch (index) {
-            case 1 -> ProblemType.SQL;
-            case 2 -> ProblemType.PROGRAM;
-            default -> ProblemType.NULL;
+            case 1 -> SQL;
+            case 2 -> PROGRAM;
+            default -> NULL;
         };
     }
 
-    public static int getIndex(ProblemType type) {
-        return switch (type) {
+    @Override
+    public int index() {
+        return switch (this) {
             case SQL -> 1;
             case PROGRAM -> 2;
             default -> 0;

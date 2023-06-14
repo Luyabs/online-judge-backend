@@ -1,5 +1,8 @@
 package com.example.onlinejudge.controller;
 
+import com.example.onlinejudge.common.base.BaseController;
+import com.example.onlinejudge.entity.Tag;
+import com.example.onlinejudge.entity.User;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,6 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/tag")
-public class TagController {
+public class TagController extends BaseController<Tag>  {
 
 }

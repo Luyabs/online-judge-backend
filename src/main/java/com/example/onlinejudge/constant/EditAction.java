@@ -3,7 +3,7 @@ package com.example.onlinejudge.constant;
 /**
  * 题目修改动作
  */
-public enum EditAction {
+public enum EditAction implements EnumIndex {
     NULL("null"),
     INSERT("新增"),
     DELETE("删除"),
@@ -15,21 +15,22 @@ public enum EditAction {
         this.action = action;
     }
 
-    public String getRoleName() {
+    public String getAction() {
         return action;
     }
 
-    public static EditAction getEditAction(int index) {
+    public static EditAction get(int index) {
         return switch (index) {
-            case 1 -> EditAction.INSERT;
-            case 2 -> EditAction.DELETE;
-            case 3 -> EditAction.UPDATE;
+            case 1 -> INSERT;
+            case 2 -> DELETE;
+            case 3 -> UPDATE;
             default -> EditAction.NULL;
         };
     }
 
-    public static int getIndex(EditAction type) {
-        return switch (type) {
+    @Override
+    public int index() {
+        return switch (this) {
             case INSERT -> 1;
             case DELETE -> 2;
             case UPDATE -> 3;

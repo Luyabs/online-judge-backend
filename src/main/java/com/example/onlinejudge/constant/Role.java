@@ -3,7 +3,7 @@ package com.example.onlinejudge.constant;
 /**
  * 角色
  */
-public enum Role {
+public enum Role implements EnumIndex {
     NULL("null"),
     NORMAL_USER("normal_user"),
     ADMIN("admin");
@@ -18,21 +18,20 @@ public enum Role {
         return roleName;
     }
 
-    public static Role getRole(int index) {
+    public static Role get(int index) {
         return switch (index) {
-            case 1 -> Role.NORMAL_USER;
-            case 2 -> Role.ADMIN;
-            default -> Role.NULL;
+            case 1 -> NORMAL_USER;
+            case 2 -> ADMIN;
+            default -> NULL;
         };
     }
 
-    public static int getIndex(Role role) {
-        return switch (role) {
+    @Override
+    public int index() {
+        return switch (this) {
             case NORMAL_USER -> 1;
             case ADMIN -> 2;
             default -> 0;
         };
     }
-
-
 }

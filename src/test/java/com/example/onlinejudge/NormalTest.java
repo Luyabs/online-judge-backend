@@ -25,12 +25,12 @@ public class NormalTest {
     @Test
     void test02() {
         // 获取枚举量索引
-        int index = ProblemDifficulty.getIndex(ProblemDifficulty.HARD);
+        int index = ProblemDifficulty.HARD.index();
         System.out.println(index);
 
         // 按序号 获取枚举对象 获取枚举对象的一个属性
-        ProblemDifficulty difficulty = ProblemDifficulty.getProblemDifficulty(2);
+        ProblemDifficulty difficulty = ProblemDifficulty.get(2);
         System.out.println(difficulty);
-        System.out.println(difficulty.getRoleName());
+        System.out.println(difficulty.getDifficulty());
     }
 }
