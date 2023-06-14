@@ -1,6 +1,8 @@
 package com.example.onlinejudge.config;
 
 import cn.dev33.satoken.interceptor.SaInterceptor;
+import cn.dev33.satoken.router.SaHttpMethod;
+import cn.dev33.satoken.router.SaRouter;
 import cn.dev33.satoken.stp.StpUtil;
 import com.example.onlinejudge.common.interceptor.Knife4jInterceptor;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -55,7 +57,7 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
         registry.addMapping("/**")
                 .allowedOrigins("*")
                 .allowedHeaders("*")
-                .allowedMethods("GET", "HEAD", "POST", "DELETE", "PUT")
+                .allowedMethods("GET", "HEAD", "POST", "DELETE", "PUT", "OPTIONS")
                 .allowCredentials(false)
                 .maxAge(3600);
     }
@@ -70,10 +72,12 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
                     .addPathPatterns("/doc.html");
 
         registry.addInterceptor(new SaInterceptor(
-                handle -> StpUtil.checkLogin()
+                handle ->
+                        SaRouter.notMatch(SaHttpMethod.OPTIONS) // 排除跨域时的OPTIONS请求
+                        .check(r -> StpUtil.checkLogin())
                 ))
                 .addPathPatterns("/**")
-                .excludePathPatterns("/user/login", "/user/register", "/user/is_login")
+                .excludePathPatterns("/user/login", "/user/register", "/user/is_login", "/user/info")
                 .excludePathPatterns("/doc.html**", "/swagger-resources", "/v2/api-docs**");
     }
 

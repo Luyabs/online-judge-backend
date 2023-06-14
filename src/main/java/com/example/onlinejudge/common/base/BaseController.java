@@ -31,7 +31,7 @@ public abstract class BaseController<T> {
 
     @ApiOperation(value = "分页获取", notes = "需要传入当前页和页大小")
     @GetMapping("/page_without_condition")
-    public Result getPage(int currentPage, int pageSize) {
+    public Result getPage(@RequestParam(defaultValue = "1") int currentPage, @RequestParam(defaultValue = "10") int pageSize) {
         return Result.success().data("page", baseService.page(new Page<>(currentPage, pageSize)));
     }
 
@@ -39,7 +39,7 @@ public abstract class BaseController<T> {
     @GetMapping("/{id}")
     public Result getById(@PathVariable Serializable id) {
         T entity = baseService.getByIdNotNull(id);
-        return entity != null ? Result.success().data("one", entity) : Result.error().message("不存在id: " + id);
+        return Result.success().data("one", entity);
     }
 
     @ApiOperation(value = "新增", notes = "需要传入JSON")
