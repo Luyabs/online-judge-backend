@@ -1,8 +1,0 @@
-{
-  "properties": [
-    {
-      "name": "base-controller-mapping.get.get-all",
-      "type": "java.lang.String",
-      "description": "Description for base-controller-mapping.get.get-all."
-  }
-] }
