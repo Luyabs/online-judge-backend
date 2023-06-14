@@ -9,7 +9,6 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-@TableName("user")
 public class UserLoginVo {
     /**
      * 账户名

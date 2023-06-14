@@ -12,7 +12,6 @@ import java.util.List;
  */
 @Data
 @Accessors(chain = true)
-@TableName("user")
 public class UserInfoVo {
     /**
      * 用户id
@@ -50,7 +49,4 @@ public class UserInfoVo {
      */
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime insertTime;
-
-    public UserInfoVo() {
-    }
 }

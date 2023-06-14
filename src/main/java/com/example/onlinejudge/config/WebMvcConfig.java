@@ -1,6 +1,7 @@
 package com.example.onlinejudge.config;
 
 import cn.dev33.satoken.interceptor.SaInterceptor;
+import cn.dev33.satoken.stp.StpUtil;
 import com.example.onlinejudge.common.interceptor.Knife4jInterceptor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -68,9 +69,12 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
             registry.addInterceptor(new Knife4jInterceptor())
                     .addPathPatterns("/doc.html");
 
-        registry.addInterceptor(new SaInterceptor())
+        registry.addInterceptor(new SaInterceptor(
+                handle -> StpUtil.checkLogin()
+                ))
                 .addPathPatterns("/**")
-                .excludePathPatterns();
+                .excludePathPatterns("/user/login", "/user/register", "/user/is_login")
+                .excludePathPatterns("/doc.html**", "/swagger-resources", "/v2/api-docs**");
     }
 
     /**

@@ -12,7 +12,6 @@ import java.util.List;
  */
 @Data
 @Accessors(chain = true)
-@TableName("user")
 public class UserRegisterVo {
     /**
      * 账户名
