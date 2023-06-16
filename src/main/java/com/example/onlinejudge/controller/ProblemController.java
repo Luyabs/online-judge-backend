@@ -31,7 +31,7 @@ public class ProblemController {
     @Autowired
     private ProblemService problemService;
 
-    @ApiOperation(tags = "题目获取Dto", value = "分页获取",
+    @ApiOperation(tags = "题目获取", value = "分页获取",
             notes = "参数: currentPage=当前页, pageSize=页大小, " +
                     "condition=条件查询{userId, title, content, type, difficulty, isVerified}")
     @GetMapping("/page")
