@@ -33,9 +33,14 @@ public class TestCase {
     private Long problemId;
 
     /**
-     * 测试语句
+     * 测试输入
      */
-    private String statement;
+    private String input;
+
+    /**
+     * 预期输出结果
+     */
+    private String output;
 
     /**
      * 测试描述
