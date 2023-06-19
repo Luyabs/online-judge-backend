@@ -77,8 +77,8 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
                         .check(r -> StpUtil.checkLogin())
                 ))
                 .addPathPatterns("/**")
-                .excludePathPatterns("/user/login", "/user/register", "/user/is_login", "/user/info")
-                .excludePathPatterns("/doc.html**", "/swagger-resources", "/v2/api-docs**");
+                .excludePathPatterns("/user/login", "/user/register", "/user/is_login", "/user/info","/webjars/**")
+                .excludePathPatterns("/doc.html**", "/swagger-resources", "/v2/api-docs**","/webjars/**");
     }
 
     /**

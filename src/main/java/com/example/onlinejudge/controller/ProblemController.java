@@ -8,12 +8,14 @@ import com.example.onlinejudge.common.exception.exception.ServiceException;
 import com.example.onlinejudge.dto.ProblemDto;
 import com.example.onlinejudge.entity.Problem;
 import com.example.onlinejudge.service.ProblemService;
+import com.example.onlinejudge.vo.ProblemInputVo;
 import com.example.onlinejudge.vo.ProblemQueryConditionVo;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
+import java.net.PortUnreachableException;
 
 /**
  * <p>
@@ -54,5 +56,12 @@ public class ProblemController {
     public Result getMyUploadPage(@RequestParam(defaultValue = "1") int currentPage, @RequestParam(defaultValue = "10") int pageSize, ProblemQueryConditionVo condition) {
         IPage<ProblemDto> page = problemService.getPageDto(currentPage, pageSize, condition.setUserId(StpUtil.getLoginIdAsLong()));
         return Result.success().data("page", page);
+    }
+    @ApiOperation(tags = "上传管理",value = "上传题目",
+    notes = "参数: title, content, type, difficulty,runtime_limit,memory_limit")
+    @PostMapping("/my_upload")
+    public Result upLoadProblem(@RequestBody ProblemInputVo problemInputVo){
+        boolean res = problemService.upLoadProblem(problemInputVo);
+        return res?Result.success().data("problemInputVo", problemInputVo):Result.error();
     }
 }
