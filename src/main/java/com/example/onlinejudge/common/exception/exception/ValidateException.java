@@ -6,11 +6,6 @@ import java.io.Serializable;
  * 自定义业务层异常类 - 不存在
  */
 public class ValidateException extends ServiceException {
-    public static final String NOT_NULL = "不能为空";
-    public static final String NOT_EXIST = "不存在";
-    public static final String OUT_OF_RANGE = "超出范围";
-    public static final String UNIQUE = "已存在";
-
     /**
      * 异常信息
      * @param message 自定义异常信息

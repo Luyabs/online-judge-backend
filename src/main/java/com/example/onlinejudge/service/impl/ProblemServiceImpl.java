@@ -4,6 +4,7 @@ import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.onlinejudge.common.authentication.UserInfo;
 import com.example.onlinejudge.common.exception.exception.ServiceException;
 import com.example.onlinejudge.constant.ProblemDifficulty;
 import com.example.onlinejudge.constant.ProblemType;
@@ -49,46 +50,21 @@ public class ProblemServiceImpl extends BaseServiceImpl<ProblemMapper, Problem> 
 
     @Override
     public boolean upLoadProblem(ProblemInputVo problemInputVo) {
-        if(StringUtils.isBlank(problemInputVo.getTitle()))
-            throw new ServiceException("题目标题不能为空");
-        judgeProblemContent(problemInputVo);
-        Problem newProblem = new Problem().setUserId(Long.valueOf(String.valueOf(StpUtil.getLoginId())));
+        Problem newProblem = new Problem().setUserId(UserInfo.getUserId());
         BeanUtils.copyProperties(problemInputVo,newProblem);
         return problemMapper.insert(newProblem) == 1;
     }
     @Override
     public boolean modifyProblem(ProblemModifyVo problemModifyVo) {
-        Long problemId = problemModifyVo.getProblemId();
-        if(problemMapper.selectById(problemId) == null)
-            throw new ServiceException("题目不存在");
-        judgeProblemContent(problemModifyVo);
-        Problem newProblem = new Problem().setUserId(Long.valueOf(String.valueOf(StpUtil.getLoginId()))).
-                setProblemId(problemId);
+        Problem newProblem = new Problem()
+                .setUserId(UserInfo.getUserId())
+                .setProblemId(problemModifyVo.getProblemId());
         BeanUtils.copyProperties(problemModifyVo,newProblem);
         return problemMapper.updateById(newProblem) == 1;
     }
 
     @Override
     public boolean deleteProblem(Long problemId) {
-        if(problemMapper.selectById(problemId) == null)
-            throw new ServiceException("题目不存在");
         return problemMapper.deleteById(problemId) == 1;
     }
-
-    private boolean judgeProblemContent(ProblemInputVo problemInputVo){
-        if(StringUtils.isBlank(problemInputVo.getTitle()))
-            throw new ServiceException("题目标题不能为空");
-        if(StringUtils.isBlank(problemInputVo.getContent()))
-            throw new ServiceException("题目内容不能为空");
-        if(ProblemType.get(problemInputVo.getType()) == ProblemType.NULL)
-            throw new ServiceException("题目类型不存在");
-        if(ProblemDifficulty.get(problemInputVo.getDifficulty()) == ProblemDifficulty.NULL)
-            throw new ServiceException("题目难度不存在");
-        if(problemInputVo.getRuntimeLimit() < 0||problemInputVo.getRuntimeLimit() > 128)
-            throw new ServiceException("时间限制超范围");
-        if(problemInputVo.getMemoryLimit() < 0||problemInputVo.getMemoryLimit() > 128)
-            throw new ServiceException("内存限制超范围");
-        return true;
-    }
-
 }

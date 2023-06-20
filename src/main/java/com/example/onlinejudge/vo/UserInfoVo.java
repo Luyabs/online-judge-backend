@@ -16,7 +16,6 @@ public class UserInfoVo {
     /**
      * 用户id
      */
-    @TableId(value = "user_id", type = IdType.ASSIGN_ID)
     private Long userId;
 
     /**
@@ -47,6 +46,5 @@ public class UserInfoVo {
     /**
      * 用户加入时间
      */
-    @TableField(fill = FieldFill.INSERT)
     private LocalDateTime insertTime;
 }

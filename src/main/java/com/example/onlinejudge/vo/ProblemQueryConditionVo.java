@@ -3,6 +3,9 @@ package com.example.onlinejudge.vo;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+
 /**
  * 条件查询所用VO
  */

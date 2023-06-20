@@ -15,6 +15,8 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 /**
  * <p>
  *  前端控制器
@@ -59,7 +61,7 @@ public class ProblemController {
     @ApiOperation(tags = "上传管理",value = "上传题目",
     notes = "参数: title, content, type, difficulty,runtime_limit,memory_limit")
     @PostMapping("/my_upload")
-    public Result upLoadProblem(@RequestBody ProblemInputVo problemInputVo){
+    public Result upLoadProblem(@Valid @RequestBody ProblemInputVo problemInputVo){
         boolean res = problemService.upLoadProblem(problemInputVo);
         return res?Result.success().data("problemInputVo", problemInputVo):Result.error();
     }
@@ -67,7 +69,7 @@ public class ProblemController {
     @ApiOperation(tags = "上传管理", value = "修改题目",
             notes = "参数: ,problemId, title, content, type, difficulty,runtime_limit,memory_limit")
     @PutMapping("/my_upload")
-    public Result modifyProblem(@RequestBody ProblemModifyVo problemModifyVo) {
+    public Result modifyProblem(@Valid @RequestBody ProblemModifyVo problemModifyVo) {
         boolean res = problemService.modifyProblem(problemModifyVo);
         return res?Result.success().data("problemModifyVo", problemModifyVo):Result.error();
     }

@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import javax.validation.constraints.Size;
+
 /**
  * 登录与注册VO
  */
