@@ -55,6 +55,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
 
     /**
      * 解析token
+     * 需注意: 此处并非根据header中的token做解析
      * @param tokenValue token值
      */
     @Override

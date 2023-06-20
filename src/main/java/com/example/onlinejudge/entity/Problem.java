@@ -65,12 +65,12 @@ public class Problem {
     /**
      * 运行时间限制
      */
-    private Object runtimeLimit; //不大于128ms
+    private Double runtimeLimit; //不大于128ms
 
     /**
      * 运行内存限制
      */
-    private Object memoryLimit; //不大于128m
+    private Double memoryLimit; //不大于128m
 
     /**
      * 是否通过审核

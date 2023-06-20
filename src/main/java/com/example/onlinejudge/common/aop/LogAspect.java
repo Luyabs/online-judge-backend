@@ -3,9 +3,7 @@ package com.example.onlinejudge.common.aop;
 import cn.dev33.satoken.stp.StpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
-import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -26,9 +24,9 @@ public class LogAspect {
     @Before("printLogMethod()")
     public void invoke(JoinPoint joinPoint) {
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
-        Log log2 = methodSignature.getMethod().getAnnotation(Log.class);
+//        Log log2 = methodSignature.getMethod().getAnnotation(Log.class);
 
-        if (null != log2) {
+//        if (null != log2) {
             String now = LocalDateTime.now().toString().split("\\.")[0];
             if (StpUtil.isLogin()) {
                 long userId = StpUtil.getLoginIdAsLong();
@@ -46,5 +44,5 @@ public class LogAspect {
                         + Arrays.asList(joinPoint.getArgs()));
             }
         }
-    }
+//    }
 }

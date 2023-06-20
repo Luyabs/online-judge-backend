@@ -3,6 +3,7 @@ package com.example.onlinejudge.controller;
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.onlinejudge.common.Result;
+import com.example.onlinejudge.common.authentication.UserInfo;
 import com.example.onlinejudge.common.exception.exception.ServiceException;
 import com.example.onlinejudge.dto.ProblemDto;
 import com.example.onlinejudge.entity.Problem;
@@ -51,9 +52,10 @@ public class ProblemController {
                     "condition=条件查询{userId, title, content, type, difficulty, isVerified}")
     @GetMapping("/my_upload")
     public Result getMyUploadPage(@RequestParam(defaultValue = "1") int currentPage, @RequestParam(defaultValue = "10") int pageSize, ProblemQueryConditionVo condition) {
-        IPage<ProblemDto> page = problemService.getPageDto(currentPage, pageSize, condition.setUserId(StpUtil.getLoginIdAsLong()));
+        IPage<ProblemDto> page = problemService.getPageDto(currentPage, pageSize, condition.setUserId(UserInfo.getUserId()));
         return Result.success().data("page", page);
     }
+
     @ApiOperation(tags = "上传管理",value = "上传题目",
     notes = "参数: title, content, type, difficulty,runtime_limit,memory_limit")
     @PostMapping("/my_upload")
@@ -61,6 +63,7 @@ public class ProblemController {
         boolean res = problemService.upLoadProblem(problemInputVo);
         return res?Result.success().data("problemInputVo", problemInputVo):Result.error();
     }
+
     @ApiOperation(tags = "上传管理", value = "修改题目",
             notes = "参数: ,problemId, title, content, type, difficulty,runtime_limit,memory_limit")
     @PutMapping("/my_upload")
@@ -68,6 +71,7 @@ public class ProblemController {
         boolean res = problemService.modifyProblem(problemModifyVo);
         return res?Result.success().data("problemModifyVo", problemModifyVo):Result.error();
     }
+
     @ApiOperation(tags = "上传管理", value = "删除题目",
             notes = "参数：题目Id")
     @DeleteMapping("/my_upload/{problemId}")

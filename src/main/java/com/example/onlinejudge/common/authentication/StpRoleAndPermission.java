@@ -38,4 +38,11 @@ public class StpRoleAndPermission implements StpInterface {
         list.add(Role.get(user.getRole()).getRoleName());
         return list;
     }
+
+    public List<Integer> getRoleNumList(Object loginId) {
+        List<Integer> list = new ArrayList<>();
+        User user = userService.getByIdNotNull((Serializable) loginId);
+        list.add(user.getRole());
+        return list;
+    }
 }

@@ -73,8 +73,8 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
 
         registry.addInterceptor(new SaInterceptor(
                 handle ->
-                        SaRouter.notMatch(SaHttpMethod.OPTIONS) // 排除跨域时的OPTIONS请求
-                        .check(r -> StpUtil.checkLogin())
+                        SaRouter.match("/**")
+                                .notMatch(SaHttpMethod.OPTIONS) // 排除跨域时的OPTIONS请求
                 ))
                 .addPathPatterns("/**")
                 .excludePathPatterns("/user/login", "/user/register", "/user/is_login", "/user/info","/webjars/**")

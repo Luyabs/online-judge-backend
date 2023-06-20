@@ -1,4 +1,4 @@
-package com.example.onlinejudge.common.aop;
+package com.example.onlinejudge.common.aop.annotation;
 
 import java.lang.annotation.*;
 

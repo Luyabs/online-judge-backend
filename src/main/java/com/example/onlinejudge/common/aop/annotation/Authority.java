@@ -1,4 +1,4 @@
-package com.example.onlinejudge.common.aop;
+package com.example.onlinejudge.common.aop.annotation;
 
 import java.lang.annotation.*;
 
@@ -9,7 +9,8 @@ import java.lang.annotation.*;
 @Target(ElementType.METHOD)
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-public @interface CheckAuthority {
-    boolean authority() default true;   // 作者权限
-    boolean admin() default false;      // 管理员权限
+public @interface Authority {
+    boolean author() default true;      // 作者权限 -- 暂时无用
+
+    boolean admin() default true;      // 管理员权限
 }
