@@ -2,6 +2,7 @@ package com.example.onlinejudge.common.aop.authoritystrategy;
 
 import com.example.onlinejudge.common.authentication.UserInfo;
 import com.example.onlinejudge.common.exception.exception.NoAccessException;
+import com.example.onlinejudge.common.exception.exception.ServiceException;
 import com.example.onlinejudge.entity.Problem;
 import com.example.onlinejudge.entity.TestCase;
 import com.example.onlinejudge.service.ProblemService;
@@ -22,8 +23,10 @@ public class TestCaseStrategy implements AuthorityStrategy {
     public void execute(Object arg0) {
         if (arg0.getClass() == Long.class)
             isOwner((Long) arg0);
-        if (arg0.getClass() == ProblemModifyVo.class)
-            isOwner(((ProblemModifyVo) arg0).getProblemId());
+        //else if (arg0.getClass() == ProblemModifyVo.class)
+        //    isOwner(((ProblemModifyVo) arg0).getProblemId());
+        else
+            ServiceException.throwException("ProblemStrategy中 " + arg0 + " 无法解析");
     }
 
     @Override

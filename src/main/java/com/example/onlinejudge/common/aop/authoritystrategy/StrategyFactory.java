@@ -17,7 +17,7 @@ public class StrategyFactory {
             return problemStrategy;
         else if (methodName.endsWith("TestCase"))
             return testCaseStrategy;
-        else
-            throw new ServiceException("StrategyFactory中方法名" + methodName + "没有匹配项, 不能检查是否是作者");
+        ServiceException.throwException("StrategyFactory中方法名" + methodName + "没有匹配项, 不能检查是否是作者");
+        return null;
     }
 }
