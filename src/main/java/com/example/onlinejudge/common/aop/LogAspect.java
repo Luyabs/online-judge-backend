@@ -24,25 +24,22 @@ public class LogAspect {
     @Before("printLogMethod()")
     public void invoke(JoinPoint joinPoint) {
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
-//        Log log2 = methodSignature.getMethod().getAnnotation(Log.class);
 
-//        if (null != log2) {
-            String now = LocalDateTime.now().toString().split("\\.")[0];
-            if (StpUtil.isLogin()) {
-                long userId = StpUtil.getLoginIdAsLong();
-                log.info(now + "\t"
-                        + "user_id=" + userId + "\t"
-                        + joinPoint.getTarget().getClass().getName() + "\t"
-                        + methodSignature.getMethod().getName() + "\t"
-                        + Arrays.asList(joinPoint.getArgs()));
-            }
-            else {
-                log.info(now + "\t"
-                        + "__guest__" + "\t"
-                        + joinPoint.getTarget().getClass().getName() + "\t"
-                        + methodSignature.getMethod().getName() + "\t"
-                        + Arrays.asList(joinPoint.getArgs()));
-            }
+        String now = LocalDateTime.now().toString().split("\\.")[0];
+        if (StpUtil.isLogin()) {
+            long userId = StpUtil.getLoginIdAsLong();
+            log.info(now + "\t"
+                    + "user_id=" + userId + "\t"
+                    + joinPoint.getTarget().getClass().getName() + "\t"
+                    + methodSignature.getMethod().getName() + "\t"
+                    + Arrays.asList(joinPoint.getArgs()));
         }
-//    }
+        else {
+            log.info(now + "\t"
+                    + "__guest__" + "\t"
+                    + joinPoint.getTarget().getClass().getName() + "\t"
+                    + methodSignature.getMethod().getName() + "\t"
+                    + Arrays.asList(joinPoint.getArgs()));
+        }
+    }
 }

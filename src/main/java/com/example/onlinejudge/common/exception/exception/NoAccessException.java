@@ -20,7 +20,7 @@ public class NoAccessException extends ServiceException {
      * @param attribute 属性 / 对象名
      */
     public NoAccessException(Serializable id, String attribute) {
-        super("无权访问 id=" + id + " 的 " + attribute);
+        super("无权操作 id=" + id + "的" + attribute);
     }
 
     public static void throwException(String message) {
