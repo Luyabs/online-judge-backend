@@ -75,7 +75,7 @@ public class Problem {
     /**
      * 是否通过审核
      */
-    private Boolean isVerified;
+//    private Boolean isVerified;
 
     /**
      * 题目信息更新时间

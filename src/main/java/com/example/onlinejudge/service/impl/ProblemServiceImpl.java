@@ -1,27 +1,21 @@
 package com.example.onlinejudge.service.impl;
 
-import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.onlinejudge.common.aop.annotation.Authority;
 import com.example.onlinejudge.common.authentication.UserInfo;
-import com.example.onlinejudge.common.exception.exception.ServiceException;
-import com.example.onlinejudge.constant.ProblemDifficulty;
-import com.example.onlinejudge.constant.ProblemType;
+import com.example.onlinejudge.common.base.BaseServiceImpl;
 import com.example.onlinejudge.dto.ProblemDto;
 import com.example.onlinejudge.entity.Problem;
 import com.example.onlinejudge.mapper.ProblemMapper;
 import com.example.onlinejudge.service.ProblemService;
-import com.example.onlinejudge.common.base.BaseServiceImpl;
 import com.example.onlinejudge.vo.ProblemInputVo;
 import com.example.onlinejudge.vo.ProblemModifyVo;
 import com.example.onlinejudge.vo.ProblemQueryConditionVo;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import javax.validation.Valid;
 
 /**
  * <p>
@@ -49,12 +43,14 @@ public class ProblemServiceImpl extends BaseServiceImpl<ProblemMapper, Problem> 
     }
 
     @Override
-    public boolean upLoadProblem(ProblemInputVo problemInputVo) {
+    public boolean uploadProblem(ProblemInputVo problemInputVo) {
         Problem newProblem = new Problem().setUserId(UserInfo.getUserId());
         BeanUtils.copyProperties(problemInputVo,newProblem);
         return problemMapper.insert(newProblem) == 1;
     }
+
     @Override
+    @Authority(author = true, admin = true)
     public boolean modifyProblem(ProblemModifyVo problemModifyVo) {
         Problem newProblem = new Problem()
                 .setUserId(UserInfo.getUserId())
@@ -64,6 +60,7 @@ public class ProblemServiceImpl extends BaseServiceImpl<ProblemMapper, Problem> 
     }
 
     @Override
+    @Authority(author = true, admin = true)
     public boolean deleteProblem(Long problemId) {
         return problemMapper.deleteById(problemId) == 1;
     }

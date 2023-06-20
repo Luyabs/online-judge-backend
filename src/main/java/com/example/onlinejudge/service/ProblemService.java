@@ -20,7 +20,7 @@ public interface ProblemService extends BaseService<Problem> {
 
     IPage<ProblemDto> getPageDto(int currentPage, int pageSize, ProblemQueryConditionVo condition);
 
-    boolean upLoadProblem(ProblemInputVo problemInputVo);
+    boolean uploadProblem(ProblemInputVo problemInputVo);
 
     boolean modifyProblem(ProblemModifyVo problemModifyVo);
 

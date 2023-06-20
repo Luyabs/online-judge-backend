@@ -62,7 +62,7 @@ public class ProblemController {
     notes = "参数: title, content, type, difficulty,runtime_limit,memory_limit")
     @PostMapping("/my_upload")
     public Result upLoadProblem(@Valid @RequestBody ProblemInputVo problemInputVo){
-        boolean res = problemService.upLoadProblem(problemInputVo);
+        boolean res = problemService.uploadProblem(problemInputVo);
         return res?Result.success().data("problemInputVo", problemInputVo):Result.error();
     }
 
