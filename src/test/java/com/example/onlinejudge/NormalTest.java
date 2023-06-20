@@ -1,12 +1,16 @@
 package com.example.onlinejudge;
 
 import com.example.onlinejudge.common.authentication.StpRoleAndPermission;
+import com.example.onlinejudge.common.exception.exception.ValidateException;
 import com.example.onlinejudge.constant.ProblemDifficulty;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
+
+import static com.example.onlinejudge.common.exception.exception.ValidateException.NOT_NULL;
+import static com.example.onlinejudge.common.exception.exception.ValidateException.UNIQUE;
 
 @SpringBootTest
 public class NormalTest {
@@ -32,5 +36,15 @@ public class NormalTest {
         ProblemDifficulty difficulty = ProblemDifficulty.get(2);
         System.out.println(difficulty);
         System.out.println(difficulty.getDifficulty());
+    }
+
+    @Test
+    void test03() {
+        ValidateException.build()
+                .ifC(1 == 2).throwE("1111=2222", NOT_NULL)
+                .ifC(2 < 3).throwE("2<<<<3", UNIQUE);
+
+        ValidateException.throwIf(1 == 2, "1111=2222", NOT_NULL);
+        ValidateException.throwIf(2 < 3, "2<<<<3", UNIQUE);
     }
 }

@@ -11,4 +11,10 @@ public class ServiceException extends RuntimeException {
     public static void throwException(String message) {
         throw new ServiceException(message);
     }
+
+    public static void throwIf(boolean condition, String message) {
+        if (condition)
+            throw new ServiceException(message);
+    }
+
 }

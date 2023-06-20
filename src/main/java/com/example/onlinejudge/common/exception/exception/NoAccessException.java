@@ -30,4 +30,43 @@ public class NoAccessException extends ServiceException {
     public static void throwException(Serializable id, String attribute) {
         throw new NoAccessException(id, attribute);
     }
+
+    public static void throwIf(boolean condition, String message) {
+        if (condition)
+            throw new NoAccessException(message);
+    }
+
+    public static void throwIf(boolean condition, Serializable id, String attribute) {
+        if (condition)
+            throw new NoAccessException(id, attribute);
+    }
+
+    public static Builder build() {
+        return new Builder();
+    }
+
+    public static class Builder {
+        private boolean condition;
+
+        public Builder ifC(boolean condition) {
+            this.condition = condition;
+            return this;
+        }
+
+        public Builder throwE(String message) {
+            throwIf(condition, message);
+            condition = true;
+            return this;
+        }
+
+        public Builder throwE(Serializable id, String attribute) {
+            throwIf(condition, id, attribute);
+            condition = true;
+            return this;
+        }
+
+        public Builder build() {
+            return new Builder();
+        }
+    }
 }

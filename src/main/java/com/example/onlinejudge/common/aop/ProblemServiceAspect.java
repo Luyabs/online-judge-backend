@@ -2,11 +2,11 @@ package com.example.onlinejudge.common.aop;
 
 import com.example.onlinejudge.common.authentication.UserInfo;
 import com.example.onlinejudge.common.exception.exception.NoAccessException;
-import com.example.onlinejudge.common.exception.exception.ServiceException;
+import com.example.onlinejudge.common.exception.exception.ValidateException;
 import com.example.onlinejudge.constant.ProblemDifficulty;
 import com.example.onlinejudge.constant.ProblemType;
 import com.example.onlinejudge.entity.Problem;
-import com.example.onlinejudge.mapper.ProblemMapper;
+import com.example.onlinejudge.service.ProblemService;
 import com.example.onlinejudge.vo.ProblemInputVo;
 import com.example.onlinejudge.vo.ProblemModifyVo;
 import lombok.extern.slf4j.Slf4j;
@@ -20,13 +20,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import static com.example.onlinejudge.common.exception.exception.ValidateException.*;
+
 @Slf4j
 @Order(1)
 @Aspect
 @Component
 public class ProblemServiceAspect {
     @Autowired
-    private ProblemMapper problemMapper;
+    private ProblemService problemService;
 
     @Pointcut("execution(* com.example.onlinejudge.service.ProblemService.*Problem(..))")
     private void voValidPointCut() {
@@ -71,18 +73,14 @@ public class ProblemServiceAspect {
     private void judgeProblemContent(Object problemVo) {
         Problem problem = new Problem();
         BeanUtils.copyProperties(problemVo, problem);
-        if (StringUtils.isBlank(problem.getTitle()))
-            throw new ServiceException("题目标题不能为空");
-        if (StringUtils.isBlank(problem.getContent()))
-            throw new ServiceException("题目内容不能为空");
-        if (problem.getType() == ProblemType.NULL.index())
-            throw new ServiceException("题目类型不存在");
-        if (problem.getDifficulty() == ProblemDifficulty.NULL.index())
-            throw new ServiceException("题目难度不存在");
-        if (problem.getRuntimeLimit() < 0 || problem.getRuntimeLimit() > 128)
-            throw new ServiceException("时间限制超范围");
-        if (problem.getMemoryLimit() < 0 || problem.getMemoryLimit() > 128)
-            throw new ServiceException("内存限制超范围");
+
+        ValidateException.build()
+                .ifC(StringUtils.isBlank(problem.getTitle())).throwE("题目标题", NOT_NULL)
+                .ifC(StringUtils.isBlank(problem.getContent())).throwE("题目内容", NOT_NULL)
+                .ifC(problem.getType() == ProblemType.NULL.index()).throwE("题目类型", NOT_EXIST)
+                .ifC(problem.getDifficulty() == ProblemDifficulty.NULL.index()).throwE("题目难度", NOT_EXIST)
+                .ifC(problem.getRuntimeLimit() < 0 || problem.getRuntimeLimit() > 128).throwE("时间限制", OUT_OF_RANGE)
+                .ifC(problem.getMemoryLimit() < 0 || problem.getMemoryLimit() > 128).throwE("内存限制", OUT_OF_RANGE);
     }
 
     /**
@@ -90,11 +88,8 @@ public class ProblemServiceAspect {
      * @param problemId
      */
     private void judgeOwnerOrAdmin(long problemId) {
-        if (UserInfo.isAdmin()) // 管理员放行
-            return;
-        Problem problem = problemMapper.selectById(problemId);
-        if (UserInfo.getUserId() == problem.getUserId())
-            return;
-        NoAccessException.throwException(problemId, "问题");
+        Problem problem = problemService.getByIdNotNull(problemId);
+        if (!UserInfo.isAdmin() && UserInfo.getUserId() != problem.getUserId())
+            NoAccessException.throwException(problemId, "问题");
     }
 }
