@@ -35,4 +35,5 @@ public interface ProblemMapper extends BaseMapper<Problem> {
             ${ew.customSqlSegment}
             """)
     IPage<ProblemDto> selectDtoPage(Page<ProblemDto> objectPage, @Param(Constants.WRAPPER) QueryWrapper<ProblemDto> wrapper);
+
 }

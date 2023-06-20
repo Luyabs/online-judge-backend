@@ -5,6 +5,7 @@ import com.example.onlinejudge.dto.ProblemDto;
 import com.example.onlinejudge.entity.Problem;
 import com.example.onlinejudge.common.base.BaseService;
 import com.example.onlinejudge.vo.ProblemInputVo;
+import com.example.onlinejudge.vo.ProblemModifyVo;
 import com.example.onlinejudge.vo.ProblemQueryConditionVo;
 
 /**
@@ -20,5 +21,9 @@ public interface ProblemService extends BaseService<Problem> {
     IPage<ProblemDto> getPageDto(int currentPage, int pageSize, ProblemQueryConditionVo condition);
 
     boolean upLoadProblem(ProblemInputVo problemInputVo);
+
+    boolean modifyProblem(ProblemModifyVo problemModifyVo);
+
+    boolean deleteProblem(Long problenId);
 
 }

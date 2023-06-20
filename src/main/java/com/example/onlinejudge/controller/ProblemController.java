@@ -3,19 +3,16 @@ package com.example.onlinejudge.controller;
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.onlinejudge.common.Result;
-import com.example.onlinejudge.common.exception.exception.NotExistException;
 import com.example.onlinejudge.common.exception.exception.ServiceException;
 import com.example.onlinejudge.dto.ProblemDto;
 import com.example.onlinejudge.entity.Problem;
 import com.example.onlinejudge.service.ProblemService;
 import com.example.onlinejudge.vo.ProblemInputVo;
+import com.example.onlinejudge.vo.ProblemModifyVo;
 import com.example.onlinejudge.vo.ProblemQueryConditionVo;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.Serializable;
-import java.net.PortUnreachableException;
 
 /**
  * <p>
@@ -64,4 +61,19 @@ public class ProblemController {
         boolean res = problemService.upLoadProblem(problemInputVo);
         return res?Result.success().data("problemInputVo", problemInputVo):Result.error();
     }
+    @ApiOperation(tags = "上传管理", value = "修改题目",
+            notes = "参数: ,problemId, title, content, type, difficulty,runtime_limit,memory_limit")
+    @PutMapping("/my_upload")
+    public Result modifyProblem(@RequestBody ProblemModifyVo problemModifyVo) {
+        boolean res = problemService.modifyProblem(problemModifyVo);
+        return res?Result.success().data("problemModifyVo", problemModifyVo):Result.error();
+    }
+    @ApiOperation(tags = "上传管理", value = "删除题目",
+            notes = "参数：题目Id")
+    @DeleteMapping("/my_upload/{problemId}")
+    public Result deleteProblem(@PathVariable Long problemId){
+        boolean res = problemService.deleteProblem(problemId);
+        return res?Result.success().data("problemId", problemId):Result.error();
+    }
+
 }

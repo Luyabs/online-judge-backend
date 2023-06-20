@@ -9,6 +9,7 @@ import com.example.onlinejudge.service.UserService;
 import com.example.onlinejudge.vo.UserInfoVo;
 import com.example.onlinejudge.vo.UserLoginVo;
 import com.example.onlinejudge.vo.UserRegisterVo;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
