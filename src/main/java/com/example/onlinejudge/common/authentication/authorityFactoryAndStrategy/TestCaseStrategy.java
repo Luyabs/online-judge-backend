@@ -1,4 +1,4 @@
-package com.example.onlinejudge.common.aop.authoritystrategy;
+package com.example.onlinejudge.common.authentication.authorityFactoryAndStrategy;
 
 import com.example.onlinejudge.common.authentication.UserInfo;
 import com.example.onlinejudge.common.exception.exception.NoAccessException;
@@ -7,7 +7,6 @@ import com.example.onlinejudge.entity.Problem;
 import com.example.onlinejudge.entity.TestCase;
 import com.example.onlinejudge.service.ProblemService;
 import com.example.onlinejudge.service.TestCaseService;
-import com.example.onlinejudge.vo.ProblemModifyVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

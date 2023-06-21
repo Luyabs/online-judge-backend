@@ -10,7 +10,7 @@ import java.lang.annotation.*;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Authority {
-    boolean author() default true;      // 开启后，需要作者权限才能访问
+    boolean author() default true;      // 开启后，需要作者(自己)权限才能访问
 
     boolean admin() default true;      // 开启后，需要管理员权限才能访问
 

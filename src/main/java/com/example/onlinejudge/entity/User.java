@@ -3,6 +3,8 @@ package com.example.onlinejudge.entity;
 import com.baomidou.mybatisplus.annotation.*;
 
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -40,6 +42,7 @@ public class User {
     /**
      * 用户登录密码
      */
+    @JsonIgnore
     private String password;
 
     /**
@@ -51,6 +54,11 @@ public class User {
      * 个人简介
      */
     private String introduction;
+
+    /**
+     * 是否被封禁
+     */
+    private Boolean isBanned;
 
     /**
      * 用户信息更新时间

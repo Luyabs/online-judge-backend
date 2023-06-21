@@ -1,13 +1,10 @@
 package com.example.onlinejudge.service;
 
 import cn.dev33.satoken.stp.SaTokenInfo;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.onlinejudge.entity.User;
 import com.example.onlinejudge.common.base.BaseService;
-import com.example.onlinejudge.vo.UserInfoVo;
-import com.example.onlinejudge.vo.UserLoginVo;
-import com.example.onlinejudge.vo.UserRegisterVo;
-
-import java.util.Map;
+import com.example.onlinejudge.vo.*;
 
 /**
  * <p>
@@ -23,4 +20,8 @@ public interface UserService extends BaseService<User> {
     UserInfoVo info(String tokenValue);
 
     boolean register(UserRegisterVo userRegisterVo);
+
+    IPage<User> getPage(int currentPage, int pageSize, UserQueryConditionVo condition);
+
+    boolean reverseIsBanned(Long userId);
 }

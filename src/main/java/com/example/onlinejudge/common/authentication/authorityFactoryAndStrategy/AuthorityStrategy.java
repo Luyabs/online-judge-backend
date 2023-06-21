@@ -1,4 +1,4 @@
-package com.example.onlinejudge.common.aop.authoritystrategy;
+package com.example.onlinejudge.common.authentication.authorityFactoryAndStrategy;
 
 public interface AuthorityStrategy {
     /**

@@ -1,4 +1,4 @@
-package com.example.onlinejudge.common.aop.authoritystrategy;
+package com.example.onlinejudge.common.authentication.authorityFactoryAndStrategy;
 
 import com.example.onlinejudge.common.authentication.UserInfo;
 import com.example.onlinejudge.common.exception.exception.NoAccessException;
