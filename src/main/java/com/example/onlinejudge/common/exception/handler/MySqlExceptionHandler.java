@@ -33,7 +33,7 @@ public class MySqlExceptionHandler {
             return Result.error().message(message);
         }
         if (ex.getMessage().trim().startsWith("### Error updating database.  Cause: java.sql.SQLException: Field")) {
-            String message = ex.getMessage().split(":")[2].split("###")[0] + " 该属性不符合非空约束，请确保其不为空";
+            String message = ex.getMessage().split(":")[2].split("###")[0] + " 不能为空";
             log.error("[DataIntegrityViolationException] " + message);
             return Result.error().message(message);
         }
@@ -72,8 +72,8 @@ public class MySqlExceptionHandler {
     private Result duplicatePrimaryKeyException(Exception ex) {
         if (ex.getMessage().trim().startsWith("### Error updating database.  Cause: java.sql.SQLIntegrityConstraintViolationException")) {
             String message = ex.getMessage().split(":")[2].split("###")[0];
-            log.error("[UncategorizedSQLException] " + " 属性重复 违反unique约束 " + message);
-            return Result.error().message("属性重复 违反unique约束" + message);
+            log.error("[DuplicateKeyException] " + " 属性重复 " + message);
+            return Result.error().message(message.split("'")[3] + "属性重复");
         }
         ex.printStackTrace();   // 未知错误
         return Result.error().message(ex.getMessage());

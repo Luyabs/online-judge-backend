@@ -19,12 +19,14 @@ public class ProblemInputVo {
     @NotBlank
     private String content;
 
-    @Max(3)
+    @Max(2)
     @Min(1)
+    @NotNull
     private Integer type;
 
     @Max(3)
     @Min(1)
+    @NotNull
     private Integer difficulty;
 
     @DecimalMax(value = "128.0")

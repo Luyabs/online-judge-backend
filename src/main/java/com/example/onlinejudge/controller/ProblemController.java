@@ -36,7 +36,7 @@ public class ProblemController {
                     "condition=条件查询{userId, title, content, type, difficulty, isVerified}")
     @GetMapping("/page")
     public Result getPage(@RequestParam(defaultValue = "1") int currentPage, @RequestParam(defaultValue = "10") int pageSize, ProblemQueryConditionVo condition) {
-        IPage<ProblemDto> page = problemService.getPageDto(currentPage, pageSize, condition.setIsVerified(true));
+        IPage<ProblemDto> page = problemService.getPageDto(currentPage, pageSize, condition.setStatus(0));
         return Result.success().data("page", page);
     }
 

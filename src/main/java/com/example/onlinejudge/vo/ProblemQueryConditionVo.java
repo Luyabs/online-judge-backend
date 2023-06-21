@@ -38,7 +38,7 @@ public class ProblemQueryConditionVo {
     private Integer difficulty;
 
     /**
-     * 是否通过审核
+     * 状态
      */
-    private Boolean isVerified;
+    private Integer status;
 }

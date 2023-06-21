@@ -73,9 +73,9 @@ public class Problem {
     private Double memoryLimit; //不大于128m
 
     /**
-     * 是否通过审核
+     * 状态
      */
-//    private Boolean isVerified;
+    private Integer status;
 
     /**
      * 题目信息更新时间

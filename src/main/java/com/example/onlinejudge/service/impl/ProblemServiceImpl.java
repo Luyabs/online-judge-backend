@@ -38,7 +38,7 @@ public class ProblemServiceImpl extends BaseServiceImpl<ProblemMapper, Problem> 
                 .like(condition.getContent() != null, "content", condition.getContent())                // 查询内容
                 .eq(condition.getType() != null, "type", condition.getType())                         // 查询类型
                 .eq(condition.getDifficulty() != null, "difficulty", condition.getDifficulty())       // 查询难度
-                .eq(condition.getIsVerified() != null, "is_verified", condition.getIsVerified());      // 查询通过/未通过审核
+                .eq(condition.getStatus() != null, "status", condition.getStatus());      // 查询通过/未通过审核
         return problemMapper.selectDtoPage(new Page<>(currentPage, pageSize), wrapper);
     }
 
