@@ -3,7 +3,7 @@ package com.example.onlinejudge.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.onlinejudge.dto.ProblemDto;
 import com.example.onlinejudge.entity.Problem;
-import com.example.onlinejudge.common.base.BaseService;
+import com.example.onlinejudge.common.exception.handler.base.BaseService;
 import com.example.onlinejudge.vo.ProblemInputVo;
 import com.example.onlinejudge.vo.ProblemModifyVo;
 import com.example.onlinejudge.vo.ProblemQueryConditionVo;
@@ -22,8 +22,15 @@ public interface ProblemService extends BaseService<Problem> {
 
     boolean uploadProblem(ProblemInputVo problemInputVo);
 
-    boolean modifyProblem(ProblemModifyVo problemModifyVo);
+    Long modifyProblem(ProblemModifyVo problemModifyVo);
 
-    boolean deleteProblem(Long problenId);
+    boolean deleteProblem(Long problemId);
 
+    /**
+     *
+     * @param editRecordId     修改记录ID
+     * @param auditResult       审核结果
+     * @return  boolean
+     */
+    boolean auditProblem(Long editRecordId,Boolean auditResult,String verifyMessage);
 }

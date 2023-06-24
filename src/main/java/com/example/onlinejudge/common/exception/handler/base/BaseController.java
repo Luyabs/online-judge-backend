@@ -1,4 +1,4 @@
-package com.example.onlinejudge.common.base;
+package com.example.onlinejudge.common.exception.handler.base;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.onlinejudge.common.Result;

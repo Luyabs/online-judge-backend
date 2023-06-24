@@ -70,8 +70,8 @@ public class ProblemController {
             notes = "参数: ,problemId, title, content, type, difficulty,runtime_limit,memory_limit")
     @PutMapping("/my_upload")
     public Result modifyProblem(@Valid @RequestBody ProblemModifyVo problemModifyVo) {
-        boolean res = problemService.modifyProblem(problemModifyVo);
-        return res?Result.success().data("problemModifyVo", problemModifyVo):Result.error();
+        Long problemId = problemService.modifyProblem(problemModifyVo);
+        return problemId!=null?Result.success().data("newProblemId", problemId).data("problemModifyVo",problemModifyVo):Result.error();
     }
 
     @ApiOperation(tags = "上传管理", value = "删除题目",
@@ -81,5 +81,16 @@ public class ProblemController {
         boolean res = problemService.deleteProblem(problemId);
         return res?Result.success().data("problemId", problemId):Result.error();
     }
+
+    @ApiOperation(tags = "审核管理", value = "审核题目",
+            notes = "参数：editRecordId, auditResult,verifyMessage")
+    @PostMapping("/audit/{editRecordId}")
+    public Result auditProblem(@PathVariable(value = "editRecordId") Long editRecordId,
+                               @RequestParam("auditResult") Boolean auditResult,
+                                @RequestParam("verifyMessage") String verifyMessage){
+        boolean res = problemService.auditProblem(editRecordId,auditResult,verifyMessage);
+        return res?Result.success().data("problemId", editRecordId).data("auditResult",auditResult):Result.error();
+    }
+
 
 }

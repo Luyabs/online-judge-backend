@@ -75,7 +75,7 @@ public class Problem {
     /**
      * 状态
      */
-    private Integer status;
+    private Integer status;     //0:未审核 1:审核通过 2: 审核中 3:审核不通过 4:历史
 
     /**
      * 题目信息更新时间

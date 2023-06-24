@@ -1,4 +1,4 @@
-package com.example.onlinejudge.common.base;
+package com.example.onlinejudge.common.exception.handler.base;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;

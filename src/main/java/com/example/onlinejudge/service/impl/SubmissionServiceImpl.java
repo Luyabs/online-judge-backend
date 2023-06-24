@@ -3,7 +3,7 @@ package com.example.onlinejudge.service.impl;
 import com.example.onlinejudge.entity.Submission;
 import com.example.onlinejudge.mapper.SubmissionMapper;
 import com.example.onlinejudge.service.SubmissionService;
-import com.example.onlinejudge.common.base.BaseServiceImpl;
+import com.example.onlinejudge.common.exception.handler.base.BaseServiceImpl;
 import org.springframework.stereotype.Service;
 
 /**
