@@ -26,6 +26,11 @@ public interface ProblemService extends BaseService<Problem> {
 
     boolean uploadProblem(ProblemInputVo problemInputVo);
 
+    /**
+     *
+     * @param problemModifyVo
+     * @return Long editProblemID 旧数据（临时数据）的id
+     */
     Long modifyProblem(ProblemModifyVo problemModifyVo);
 
     boolean deleteProblem(Long problemId);
