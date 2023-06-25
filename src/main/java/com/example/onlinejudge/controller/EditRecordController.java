@@ -1,6 +1,6 @@
 package com.example.onlinejudge.controller;
 
-import com.example.onlinejudge.common.exception.handler.base.BaseController;
+import com.example.onlinejudge.common.base.BaseController;
 import com.example.onlinejudge.entity.EditRecord;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

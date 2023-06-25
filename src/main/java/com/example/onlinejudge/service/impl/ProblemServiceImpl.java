@@ -1,18 +1,15 @@
 package com.example.onlinejudge.service.impl;
 
-import ch.qos.logback.core.joran.spi.ElementSelector;
-import com.alibaba.druid.sql.visitor.functions.If;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.onlinejudge.common.aop.annotation.Authority;
 import com.example.onlinejudge.common.authentication.UserInfo;
 import com.example.onlinejudge.common.exception.exception.ServiceException;
-import com.example.onlinejudge.common.exception.handler.base.BaseServiceImpl;
+import com.example.onlinejudge.common.base.BaseServiceImpl;
 import com.example.onlinejudge.constant.EditAction;
 import com.example.onlinejudge.constant.EditStatus;
 import com.example.onlinejudge.constant.ProblemStatus;
-import com.example.onlinejudge.constant.ProblemType;
 import com.example.onlinejudge.dto.ProblemDto;
 import com.example.onlinejudge.entity.EditRecord;
 import com.example.onlinejudge.entity.Problem;

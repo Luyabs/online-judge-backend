@@ -3,7 +3,7 @@ package com.example.onlinejudge.service;
 import cn.dev33.satoken.stp.SaTokenInfo;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.onlinejudge.entity.User;
-import com.example.onlinejudge.common.exception.handler.base.BaseService;
+import com.example.onlinejudge.common.base.BaseService;
 import com.example.onlinejudge.vo.*;
 
 /**

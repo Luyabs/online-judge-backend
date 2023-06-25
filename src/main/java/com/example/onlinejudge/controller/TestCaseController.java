@@ -1,7 +1,7 @@
 package com.example.onlinejudge.controller;
 
 import com.example.onlinejudge.common.Result;
-import com.example.onlinejudge.common.exception.handler.base.BaseController;
+import com.example.onlinejudge.common.base.BaseController;
 import com.example.onlinejudge.entity.TestCase;
 import com.example.onlinejudge.service.TestCaseService;
 import com.example.onlinejudge.vo.TestCaseInputVo;

@@ -3,7 +3,7 @@ package com.example.onlinejudge.service.impl;
 import com.example.onlinejudge.entity.Tag;
 import com.example.onlinejudge.mapper.TagMapper;
 import com.example.onlinejudge.service.TagService;
-import com.example.onlinejudge.common.exception.handler.base.BaseServiceImpl;
+import com.example.onlinejudge.common.base.BaseServiceImpl;
 import org.springframework.stereotype.Service;
 
 /**

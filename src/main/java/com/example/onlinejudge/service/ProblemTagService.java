@@ -1,8 +1,7 @@
 package com.example.onlinejudge.service;
 
-import com.example.onlinejudge.common.exception.handler.base.BaseService;
+import com.example.onlinejudge.common.base.BaseService;
 import com.example.onlinejudge.entity.ProblemTag;
-import com.example.onlinejudge.common.exception.handler.base.BaseService;
 
 /**
  * <p>

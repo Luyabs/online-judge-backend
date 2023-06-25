@@ -9,7 +9,7 @@ import com.example.onlinejudge.entity.TestCase;
 import com.example.onlinejudge.mapper.EditRecordMapper;
 import com.example.onlinejudge.mapper.TestCaseMapper;
 import com.example.onlinejudge.service.TestCaseService;
-import com.example.onlinejudge.common.exception.handler.base.BaseServiceImpl;
+import com.example.onlinejudge.common.base.BaseServiceImpl;
 import com.example.onlinejudge.vo.TestCaseInputVo;
 import com.example.onlinejudge.vo.TestCaseModifyVo;
 import org.springframework.beans.BeanUtils;

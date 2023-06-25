@@ -3,7 +3,7 @@ package com.example.onlinejudge.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.onlinejudge.dto.ProblemDto;
 import com.example.onlinejudge.entity.Problem;
-import com.example.onlinejudge.common.exception.handler.base.BaseService;
+import com.example.onlinejudge.common.base.BaseService;
 import com.example.onlinejudge.vo.ProblemInputVo;
 import com.example.onlinejudge.vo.ProblemModifyVo;
 import com.example.onlinejudge.vo.ProblemQueryConditionVo;
