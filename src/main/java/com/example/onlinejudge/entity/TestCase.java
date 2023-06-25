@@ -60,7 +60,7 @@ public class TestCase {
     /**
      * 测试用例顺序
      */
-    private Integer order;
+    private Integer tOrder;
 
     /**
      * 是否通过审核

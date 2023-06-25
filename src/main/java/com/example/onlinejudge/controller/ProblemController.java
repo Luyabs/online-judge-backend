@@ -1,12 +1,12 @@
 package com.example.onlinejudge.controller;
 
-import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.onlinejudge.common.Result;
 import com.example.onlinejudge.common.authentication.UserInfo;
 import com.example.onlinejudge.common.exception.exception.ServiceException;
 import com.example.onlinejudge.dto.ProblemDto;
 import com.example.onlinejudge.entity.Problem;
+import com.example.onlinejudge.entity.TestCase;
 import com.example.onlinejudge.service.ProblemService;
 import com.example.onlinejudge.vo.ProblemInputVo;
 import com.example.onlinejudge.vo.ProblemModifyVo;
@@ -40,6 +40,15 @@ public class ProblemController {
         return Result.success().data("page", page);
     }
 
+    @ApiOperation(tags = "题目获取", value = "分页获取(需管理员权限)",
+            notes = "参数: currentPage=当前页, pageSize=页大小, " +
+                    "condition=条件查询{userId, title, content, type, difficulty, isVerified}")
+    @GetMapping("/admin/page")
+    public Result getPageInAdmin(@RequestParam(defaultValue = "1") int currentPage, @RequestParam(defaultValue = "10") int pageSize, ProblemQueryConditionVo condition) {
+        IPage<ProblemDto> page = problemService.getPageDtoInAdmin(currentPage, pageSize, condition);
+        return Result.success().data("page", page);
+    }
+
     @ApiOperation(tags = "题目获取", value = "按problemId获取", notes = "参数: problemId=路径变量")
     @GetMapping("/{problemId}")
     public Result getById(@PathVariable(value = "problemId") String problemId) {
@@ -49,7 +58,7 @@ public class ProblemController {
         return Result.success().data("problem", problem);
     }
 
-    @ApiOperation(tags = "上传管理", value = "分页获取",
+    @ApiOperation(tags = "上传管理", value = "分页获取(我的上传)",
             notes = "参数: currentPage=当前页, pageSize=页大小, " +
                     "condition=条件查询{userId, title, content, type, difficulty, isVerified}")
     @GetMapping("/my_upload")
@@ -82,15 +91,14 @@ public class ProblemController {
         return res?Result.success().data("problemId", problemId):Result.error();
     }
 
-    @ApiOperation(tags = "审核管理", value = "审核题目",
-            notes = "参数：editRecordId, auditResult,verifyMessage")
-    @PostMapping("/audit/{editRecordId}")
-    public Result auditProblem(@PathVariable(value = "editRecordId") Long editRecordId,
-                               @RequestParam("auditResult") Boolean auditResult,
-                                @RequestParam("verifyMessage") String verifyMessage){
-        boolean res = problemService.auditProblem(editRecordId,auditResult,verifyMessage);
-        return res?Result.success().data("problemId", editRecordId).data("auditResult",auditResult):Result.error();
+    /**
+     * 这用于获取题目对应的测试用例
+     */
+    @ApiOperation(tags = "测试用例获取",value = "分页获取指定题目的测试用例",notes = "参数: problemId")
+    @GetMapping("/page/test_case//{problemId}")
+    public Result getPage(@RequestParam(defaultValue = "1") int currentPage, @RequestParam(defaultValue = "10") int pageSize, @PathVariable(value = "problemId") long problemId) {
+        IPage<TestCase> page = problemService.getTestCasePageByProblemId(problemId, currentPage, pageSize);
+        return Result.success().data("page", page);
     }
-
 
 }

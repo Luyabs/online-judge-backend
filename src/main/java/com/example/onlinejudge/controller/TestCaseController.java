@@ -1,7 +1,8 @@
 package com.example.onlinejudge.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.onlinejudge.common.Result;
-import com.example.onlinejudge.common.base.BaseController;
 import com.example.onlinejudge.entity.TestCase;
 import com.example.onlinejudge.service.TestCaseService;
 import com.example.onlinejudge.vo.TestCaseInputVo;
@@ -20,9 +21,16 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/testCase")
-public class TestCaseController extends BaseController<TestCase> {
+public class TestCaseController {
     @Autowired
     private TestCaseService testCaseService;
+
+    @ApiOperation(tags = "测试用例获取",value = "按id获取测试用例",notes = "参数: testCaseId")
+    @GetMapping("/{testCaseId}")
+    public Result getById(@PathVariable(value = "testCaseId") String testCaseId) {
+        TestCase testCase = testCaseService.getByIdNotNull(testCaseId);
+        return Result.success().data("testCase", testCase);
+    }
 
     @ApiOperation(tags = "上传管理",value = "上传测试用例",notes = "参数: testCaseInputVo")
     @PostMapping("/my_upload")

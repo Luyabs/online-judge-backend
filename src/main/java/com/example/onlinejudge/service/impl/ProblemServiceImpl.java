@@ -13,8 +13,11 @@ import com.example.onlinejudge.constant.ProblemStatus;
 import com.example.onlinejudge.dto.ProblemDto;
 import com.example.onlinejudge.entity.EditRecord;
 import com.example.onlinejudge.entity.Problem;
+import com.example.onlinejudge.entity.TestCase;
 import com.example.onlinejudge.mapper.EditRecordMapper;
 import com.example.onlinejudge.mapper.ProblemMapper;
+import com.example.onlinejudge.mapper.TestCaseMapper;
+import com.example.onlinejudge.service.EditRecordService;
 import com.example.onlinejudge.service.ProblemService;
 import com.example.onlinejudge.vo.ProblemInputVo;
 import com.example.onlinejudge.vo.ProblemModifyVo;
@@ -39,7 +42,13 @@ public class ProblemServiceImpl extends BaseServiceImpl<ProblemMapper, Problem> 
     private ProblemMapper problemMapper;
 
     @Autowired
+    private EditRecordService editRecordService;
+
+    @Autowired
     private EditRecordMapper editRecordMapper;
+
+    @Autowired
+    private TestCaseMapper testCaseMapper;
 
     @Override
     public IPage<ProblemDto> getPageDto(int currentPage, int pageSize, ProblemQueryConditionVo condition) {
@@ -50,8 +59,15 @@ public class ProblemServiceImpl extends BaseServiceImpl<ProblemMapper, Problem> 
                 .eq(ObjectUtils.isNotEmpty(condition.getType()), "type", condition.getType())                         // 查询类型
                 .eq(ObjectUtils.isNotEmpty(condition.getDifficulty()), "difficulty", condition.getDifficulty())       // 查询难度
                 .eq(ObjectUtils.isNotEmpty(condition.getStatus()), "status", condition.getStatus())      // 查询通过/未通过审核
+                .ne("status", ProblemStatus.HISTORY.index())      // 不该查历史记录
                 .orderByDesc("attempt_num");
         return problemMapper.selectDtoPage(new Page<>(currentPage, pageSize), wrapper);
+    }
+
+    @Override
+    @Authority(author = false, admin = true)
+    public IPage<ProblemDto> getPageDtoInAdmin(int currentPage, int pageSize, ProblemQueryConditionVo condition) {
+        return this.getPageDto(currentPage, pageSize, condition);
     }
 
     @Override
@@ -79,7 +95,7 @@ public class ProblemServiceImpl extends BaseServiceImpl<ProblemMapper, Problem> 
     @Authority(author = true, admin = true)
     @Transactional
     public Long modifyProblem(ProblemModifyVo problemModifyVo) {
-        Problem originalProblem = problemMapper.selectById(problemModifyVo.getProblemId());
+        Problem originalProblem = this.getByIdNotNull(problemModifyVo.getProblemId());
         int status = originalProblem.getStatus();
         if(status == ProblemStatus.VERIFYING.index()||status == ProblemStatus.HISTORY.index())
             ServiceException.throwException("该状态（审核中/历史）下题目无法修改");
@@ -101,7 +117,7 @@ public class ProblemServiceImpl extends BaseServiceImpl<ProblemMapper, Problem> 
         if(problemMapper.updateById(originalProblem) == 1&&problemMapper.insert(editProblem) == 1){
             newEditRecord.setEditProblemId(editProblem.getProblemId());
             //插入修改记录
-            if(editRecordMapper.insert(newEditRecord) == 1)
+            if(editRecordService.save(newEditRecord))
                 return editProblem.getProblemId();
         }
         return null;
@@ -118,19 +134,19 @@ public class ProblemServiceImpl extends BaseServiceImpl<ProblemMapper, Problem> 
                 setChangeAction(EditAction.DELETE.index()).
                 setIsAdmin(UserInfo.isAdmin()).
                 setStatus(EditStatus.WAIT.index());
-        Problem oldProblem = problemMapper.selectById(problemId);
+        Problem oldProblem = this.getByIdNotNull(problemId);
         int status = oldProblem.getStatus();
         if(status == ProblemStatus.VERIFYING.index()||status == ProblemStatus.HISTORY.index())
             ServiceException.throwException("该状态（审核中/历史）下题目无法删除");
         oldProblem.setStatus(ProblemStatus.VERIFYING.index());//只修改problem转态，删除操作留待管理员处理
-        return problemMapper.updateById(oldProblem) == 1&&editRecordMapper.insert(newEditRecord) == 1;
+        return problemMapper.updateById(oldProblem) == 1 && editRecordMapper.insert(newEditRecord) == 1;
     }
 
     @Override
     @Authority(author = false, admin = true)
     @Transactional
     public boolean auditProblem(Long editRecordId,Boolean auditResult ,String verifyMessage) {
-        EditRecord editRecord = editRecordMapper.selectById(editRecordId);
+        EditRecord editRecord = editRecordService.getByIdNotNull(editRecordId);
         Problem newProblem = getByIdNotNull(editRecord.getOriginalProblemId());
 
         //判断修改记录状态是否为“审核中”
@@ -157,5 +173,15 @@ public class ProblemServiceImpl extends BaseServiceImpl<ProblemMapper, Problem> 
         return res && editRecordMapper.updateById(editRecord) == 1
                 && problemMapper.updateById(newProblem) == 1;
 
+    }
+
+
+    @Override
+    @Authority(author = true, admin = true)
+    public IPage<TestCase> getTestCasePageByProblemId(long problemId, int currentPage, int pageSize) {
+        return testCaseMapper.selectPage(
+                new Page<>(currentPage, pageSize),
+                new QueryWrapper<TestCase>().eq("problem_id", problemId)
+        );
     }
 }

@@ -1,5 +1,9 @@
 package com.example.onlinejudge.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.onlinejudge.common.aop.annotation.Authority;
 import com.example.onlinejudge.common.authentication.UserInfo;
 import com.example.onlinejudge.common.exception.exception.ServiceException;
 import com.example.onlinejudge.constant.EditAction;
@@ -33,6 +37,7 @@ public class TestCaseServiceImpl extends BaseServiceImpl<TestCaseMapper, TestCas
 
     @Autowired
     private EditRecordMapper editRecordMapper;
+
     @Override
     @Transactional
     public boolean uploadTestCase(TestCaseInputVo testCaseInputVo) {
@@ -61,7 +66,7 @@ public class TestCaseServiceImpl extends BaseServiceImpl<TestCaseMapper, TestCas
 
     @Override
     public boolean deleteTestCase(Long testCaseId) {
-        TestCase testCase = testCaseMapper.selectById(testCaseId);
+        TestCase testCase = this.getByIdNotNull(testCaseId);
         EditRecord newEditRecord = new EditRecord().
                 setUserId(UserInfo.getUserId()).
                 setOriginalProblemId(testCase.getProblemId()).

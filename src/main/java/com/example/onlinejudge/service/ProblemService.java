@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.onlinejudge.dto.ProblemDto;
 import com.example.onlinejudge.entity.Problem;
 import com.example.onlinejudge.common.base.BaseService;
+import com.example.onlinejudge.entity.TestCase;
 import com.example.onlinejudge.vo.ProblemInputVo;
 import com.example.onlinejudge.vo.ProblemModifyVo;
 import com.example.onlinejudge.vo.ProblemQueryConditionVo;
@@ -20,6 +21,9 @@ public interface ProblemService extends BaseService<Problem> {
 
     IPage<ProblemDto> getPageDto(int currentPage, int pageSize, ProblemQueryConditionVo condition);
 
+    IPage<ProblemDto> getPageDtoInAdmin(int currentPage, int pageSize, ProblemQueryConditionVo condition);
+
+
     boolean uploadProblem(ProblemInputVo problemInputVo);
 
     Long modifyProblem(ProblemModifyVo problemModifyVo);
@@ -33,4 +37,10 @@ public interface ProblemService extends BaseService<Problem> {
      * @return  boolean
      */
     boolean auditProblem(Long editRecordId,Boolean auditResult,String verifyMessage);
+
+    /**
+     * 获取一个题目的所有测试用例
+     */
+    IPage<TestCase> getTestCasePageByProblemId(long problemId ,int currentPage, int pageSize);
+
 }
