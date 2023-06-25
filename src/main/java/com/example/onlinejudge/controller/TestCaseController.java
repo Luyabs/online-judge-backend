@@ -25,14 +25,14 @@ public class TestCaseController extends BaseController<TestCase> {
     private TestCaseService testCaseService;
 
     @ApiOperation(tags = "上传管理",value = "上传测试用例",notes = "参数: testCaseInputVo")
-    @PostMapping
+    @PostMapping("/my_upload")
     public Result uploadTestCase(@RequestBody TestCaseInputVo testCaseInputVo){
         boolean res = testCaseService.uploadTestCase(testCaseInputVo);
         return res?Result.success().data("testCaseInputVo", testCaseInputVo):Result.error();
     }
 
     @ApiOperation(tags = "上传管理",value = "修改测试用例",notes = "参数: testCaseModifyVo")
-    @PutMapping
+    @PutMapping("/my_upload")
     public Result modifyTestCase(@RequestBody TestCaseModifyVo testCaseModifyVo){
         Long testCaseId = testCaseService.modifyTestCase(testCaseModifyVo);
         return testCaseId != null?
@@ -40,7 +40,7 @@ public class TestCaseController extends BaseController<TestCase> {
     }
     @ApiOperation(tags = "上传管理", value = "删除测试用例",
             notes = "参数：用例Id")
-    @DeleteMapping("/{testCaseId}")
+    @DeleteMapping("/my_upload/{testCaseId}")
     public Result deleteTestCase(@PathVariable Long testCaseId){
         boolean res = testCaseService.deleteTestCase(testCaseId);
         return res?Result.success().data("testCaseId", testCaseId):Result.error();

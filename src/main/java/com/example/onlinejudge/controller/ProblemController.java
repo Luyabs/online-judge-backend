@@ -71,7 +71,7 @@ public class ProblemController {
     @PutMapping("/my_upload")
     public Result modifyProblem(@Valid @RequestBody ProblemModifyVo problemModifyVo) {
         Long problemId = problemService.modifyProblem(problemModifyVo);
-        return problemId!=null?Result.success().data("newProblemId", problemId).data("problemModifyVo",problemModifyVo):Result.error();
+        return problemId!=null?Result.success().data("editProblemId", problemId).data("problemModifyVo",problemModifyVo):Result.error();
     }
 
     @ApiOperation(tags = "上传管理", value = "删除题目",

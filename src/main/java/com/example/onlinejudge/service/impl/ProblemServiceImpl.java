@@ -82,31 +82,30 @@ public class ProblemServiceImpl extends BaseServiceImpl<ProblemMapper, Problem> 
     @Authority(author = true, admin = true)
     @Transactional
     public Long modifyProblem(ProblemModifyVo problemModifyVo) {
-        Problem oldProblem = problemMapper.selectById(problemModifyVo.getProblemId());
-        int status = oldProblem.getStatus();
+        Problem originalProblem = problemMapper.selectById(problemModifyVo.getProblemId());
+        int status = originalProblem.getStatus();
         if(status == ProblemStatus.VERIFYING.index()||status == ProblemStatus.HISTORY.index())
             ServiceException.throwException("该状态（审核中/历史）下题目无法修改");
-        oldProblem.setStatus(ProblemStatus.HISTORY.index());        //旧数据设为“历史”状态
+        Problem editProblem = new Problem();
+        BeanUtils.copyProperties(originalProblem,editProblem);                          //复制为临时
+        editProblem.setProblemId(null).setStatus(ProblemStatus.HISTORY.index());        //旧数据设为“历史”状态
 
-        Problem newProblem = new Problem()
-                .setUserId(UserInfo.getUserId());
-        BeanUtils.copyProperties(problemModifyVo,newProblem);
-        newProblem.setProblemId(null).
-                setStatus(ProblemStatus.VERIFYING.index());      //新数据设为“审核中”状态
+        BeanUtils.copyProperties(problemModifyVo,originalProblem);       //修改原id下数据为新数据
+        originalProblem.setStatus(ProblemStatus.VERIFYING.index());      //新数据设为“审核中”状态
 
         EditRecord newEditRecord = new EditRecord().
                 setUserId(UserInfo.getUserId()).
-                setOriginalProblemId(oldProblem.getProblemId()).
+                setOriginalProblemId(originalProblem.getProblemId()).
                 setIsTestCase(false).
                 setChangeAction(EditAction.UPDATE.index()).
                 setIsAdmin(UserInfo.isAdmin()).
                 setStatus(EditStatus.WAIT.index());
         //修改旧数据状态同时插入新数据
-        if(problemMapper.updateById(oldProblem) == 1&&problemMapper.insert(newProblem) == 1){
-            newEditRecord.setEditProblemId(newProblem.getProblemId());
+        if(problemMapper.updateById(originalProblem) == 1&&problemMapper.insert(editProblem) == 1){
+            newEditRecord.setEditProblemId(editProblem.getProblemId());
             //插入修改记录
             if(editRecordMapper.insert(newEditRecord) == 1)
-                return newProblem.getProblemId();
+                return editProblem.getProblemId();
         }
         return null;
     }
@@ -135,54 +134,30 @@ public class ProblemServiceImpl extends BaseServiceImpl<ProblemMapper, Problem> 
     @Transactional
     public boolean auditProblem(Long editRecordId,Boolean auditResult ,String verifyMessage) {
         EditRecord editRecord = editRecordMapper.selectById(editRecordId);
-        Problem oldProblem = problemMapper.selectById(editRecord.getOriginalProblemId());
-        Problem newProblem = problemMapper.selectById(editRecord.getEditProblemId());
+        Problem newProblem = getByIdNotNull(editRecord.getOriginalProblemId());
+
+        //判断修改记录状态是否为“审核中”
         if(editRecord.getStatus() != 1)
             ServiceException.throwException("修改记录状态不为‘审核中’");
         editRecord.setVerifyMessage(verifyMessage);
 
-        //判断题目状态是否为审核中
+        //判断题目状态是否为“审核中”
         Integer editAction = editRecord.getChangeAction();
         boolean res = true;
-        if(editAction == EditAction.INSERT.index()||editAction == EditAction.DELETE.index()){
-            if(oldProblem.getStatus() != ProblemStatus.VERIFYING.index())
-                ServiceException.throwException("题目状态不为‘审核中’");
-            if(auditResult){
-                if(editAction == EditAction.DELETE.index())                             //删除数据
-                    res = problemMapper.deleteById(oldProblem) == 1;
-                editRecord.setStatus(EditStatus.VERIFIED.index());
-                oldProblem.setStatus(ProblemStatus.VERIFIED.index());
-            }
-            else{
-                editRecord.setStatus(EditStatus.FAILED.index());
-                oldProblem.setStatus(ProblemStatus.FAILED.index());
-            }
+        if(newProblem.getStatus() != ProblemStatus.VERIFYING.index())
+            ServiceException.throwException("题目状态不为‘审核中’");
+        if(auditResult){
+            if(editAction == EditAction.DELETE.index())                             //删除数据
+                res = problemMapper.deleteById(newProblem) == 1;
+            editRecord.setStatus(EditStatus.VERIFIED.index());
+            newProblem.setStatus(ProblemStatus.VERIFIED.index());
         }
-        else if(editAction == EditAction.UPDATE.index()){                               //“修改”动作下修改新题目的审核状态
-            if(newProblem.getStatus() != ProblemStatus.VERIFYING.index())
-                ServiceException.throwException("题目状态不为‘审核中’");
-            if(auditResult){
-                editRecord.setStatus(EditStatus.VERIFIED.index());
-                newProblem.setStatus(ProblemStatus.VERIFIED.index());
-            }
-            else{
-                editRecord.setStatus(EditStatus.FAILED.index());
-                newProblem.setStatus(ProblemStatus.FAILED.index());
-            }
+        else{
+            editRecord.setStatus(EditStatus.FAILED.index());
+            newProblem.setStatus(ProblemStatus.FAILED.index());
         }
-        //修改修改记录状态
-//        if(auditResult){                                                            //审核成功
-//            if(editAction == EditAction.DELETE.index())                             //删除数据
-//                res = problemMapper.deleteById(oldProblem) == 1;
-//            oldProblem.setStatus(ProblemStatus.VERIFIED.index());
-//            editRecord.setStatus(EditStatus.VERIFIED.index());
-//        }
-//        else{                                                                       //审核失败
-//            editRecord.setStatus(EditStatus.FAILED.index());
-//            oldProblem.setStatus(ProblemStatus.FAILED.index());
-//        }
+
         return res && editRecordMapper.updateById(editRecord) == 1
-                && problemMapper.updateById(oldProblem) == 1
                 && problemMapper.updateById(newProblem) == 1;
 
     }
