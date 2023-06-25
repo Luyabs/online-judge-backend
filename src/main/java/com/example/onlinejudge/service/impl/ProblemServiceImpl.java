@@ -60,7 +60,7 @@ public class ProblemServiceImpl extends BaseServiceImpl<ProblemMapper, Problem> 
                 .eq(ObjectUtils.isNotEmpty(condition.getDifficulty()), "difficulty", condition.getDifficulty())       // 查询难度
                 .eq(ObjectUtils.isNotEmpty(condition.getStatus()), "status", condition.getStatus())      // 查询通过/未通过审核
                 .ne("status", ProblemStatus.HISTORY.index())      // 不该查历史记录
-                .orderByDesc("attempt_num");
+                .orderByAsc("p.problem_id");
         return problemMapper.selectDtoPage(new Page<>(currentPage, pageSize), wrapper);
     }
 
@@ -182,6 +182,10 @@ public class ProblemServiceImpl extends BaseServiceImpl<ProblemMapper, Problem> 
         return testCaseMapper.selectPage(
                 new Page<>(currentPage, pageSize),
                 new QueryWrapper<TestCase>().eq("problem_id", problemId)
+                        .orderByDesc("is_prehandle")
+                        .orderByDesc("is_posthandle")
+                        .orderByDesc("t_order")
+                        .orderByDesc("update_time")
         );
     }
 }

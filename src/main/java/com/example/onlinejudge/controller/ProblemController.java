@@ -95,7 +95,7 @@ public class ProblemController {
      * 这用于获取题目对应的测试用例
      */
     @ApiOperation(tags = "测试用例获取",value = "分页获取指定题目的测试用例",notes = "参数: problemId")
-    @GetMapping("/page/test_case//{problemId}")
+    @GetMapping("/page/test_case/{problemId}")
     public Result getPage(@RequestParam(defaultValue = "1") int currentPage, @RequestParam(defaultValue = "10") int pageSize, @PathVariable(value = "problemId") long problemId) {
         IPage<TestCase> page = problemService.getTestCasePageByProblemId(problemId, currentPage, pageSize);
         return Result.success().data("page", page);

@@ -1,5 +1,7 @@
 package com.example.onlinejudge.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.example.onlinejudge.constant.EditStatus;
 import com.example.onlinejudge.entity.EditRecord;
 import com.example.onlinejudge.common.base.BaseService;
 
@@ -13,4 +15,5 @@ import com.example.onlinejudge.common.base.BaseService;
  */
 public interface EditRecordService extends BaseService<EditRecord> {
 
+    IPage<EditRecord> getPage(int currentPage, int pageSize, EditStatus status);
 }

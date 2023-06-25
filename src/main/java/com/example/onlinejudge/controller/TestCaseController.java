@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
  * @since 2023-06-13 11:06:32
  */
 @RestController
-@RequestMapping("/testCase")
+@RequestMapping("/test_case")
 public class TestCaseController {
     @Autowired
     private TestCaseService testCaseService;
