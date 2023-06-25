@@ -67,7 +67,7 @@ public class ProblemController {
     }
 
     @ApiOperation(tags = "上传管理", value = "修改题目",
-            notes = "参数: ,problemId, title, content, type, difficulty,runtime_limit,memory_limit")
+            notes = "参数: problemId, title, content, type, difficulty,runtime_limit,memory_limit")
     @PutMapping("/my_upload")
     public Result modifyProblem(@Valid @RequestBody ProblemModifyVo problemModifyVo) {
         Long problemId = problemService.modifyProblem(problemModifyVo);

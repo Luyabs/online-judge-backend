@@ -135,25 +135,55 @@ public class ProblemServiceImpl extends BaseServiceImpl<ProblemMapper, Problem> 
     @Transactional
     public boolean auditProblem(Long editRecordId,Boolean auditResult ,String verifyMessage) {
         EditRecord editRecord = editRecordMapper.selectById(editRecordId);
-        Problem problem = problemMapper.selectById(editRecord.getOriginalProblemId());
+        Problem oldProblem = problemMapper.selectById(editRecord.getOriginalProblemId());
+        Problem newProblem = problemMapper.selectById(editRecord.getEditProblemId());
         if(editRecord.getStatus() != 1)
             ServiceException.throwException("修改记录状态不为‘审核中’");
-        if(problem.getStatus() != ProblemStatus.VERIFYING.index())
-            ServiceException.throwException("题目状态不为‘审核中’");
         editRecord.setVerifyMessage(verifyMessage);
+
+        //判断题目状态是否为审核中
+        Integer editAction = editRecord.getChangeAction();
+        boolean res = true;
+        if(editAction == EditAction.INSERT.index()||editAction == EditAction.DELETE.index()){
+            if(oldProblem.getStatus() != ProblemStatus.VERIFYING.index())
+                ServiceException.throwException("题目状态不为‘审核中’");
+            if(auditResult){
+                if(editAction == EditAction.DELETE.index())                             //删除数据
+                    res = problemMapper.deleteById(oldProblem) == 1;
+                editRecord.setStatus(EditStatus.VERIFIED.index());
+                oldProblem.setStatus(ProblemStatus.VERIFIED.index());
+            }
+            else{
+                editRecord.setStatus(EditStatus.FAILED.index());
+                oldProblem.setStatus(ProblemStatus.FAILED.index());
+            }
+        }
+        else if(editAction == EditAction.UPDATE.index()){                               //“修改”动作下修改新题目的审核状态
+            if(newProblem.getStatus() != ProblemStatus.VERIFYING.index())
+                ServiceException.throwException("题目状态不为‘审核中’");
+            if(auditResult){
+                editRecord.setStatus(EditStatus.VERIFIED.index());
+                newProblem.setStatus(ProblemStatus.VERIFIED.index());
+            }
+            else{
+                editRecord.setStatus(EditStatus.FAILED.index());
+                newProblem.setStatus(ProblemStatus.FAILED.index());
+            }
+        }
         //修改修改记录状态
-        boolean res;
-        if(auditResult){                                                            //审核成功
-            if(editRecord.getChangeAction() == EditAction.DELETE.index())           //删除数据
-                res = problemMapper.deleteById(problem) == 1;
-            editRecord.setStatus(EditStatus.VERIFIED.index());
-            problem.setStatus(ProblemStatus.VERIFIED.index());
-        }
-        else{                                                                       //审核失败
-            editRecord.setStatus(EditStatus.FAILED.index());
-            problem.setStatus(ProblemStatus.FAILED.index());
-        }
-        return editRecordMapper.updateById(editRecord) == 1 && problemMapper.updateById(problem) == 1;
+//        if(auditResult){                                                            //审核成功
+//            if(editAction == EditAction.DELETE.index())                             //删除数据
+//                res = problemMapper.deleteById(oldProblem) == 1;
+//            oldProblem.setStatus(ProblemStatus.VERIFIED.index());
+//            editRecord.setStatus(EditStatus.VERIFIED.index());
+//        }
+//        else{                                                                       //审核失败
+//            editRecord.setStatus(EditStatus.FAILED.index());
+//            oldProblem.setStatus(ProblemStatus.FAILED.index());
+//        }
+        return res && editRecordMapper.updateById(editRecord) == 1
+                && problemMapper.updateById(oldProblem) == 1
+                && problemMapper.updateById(newProblem) == 1;
 
     }
 }
