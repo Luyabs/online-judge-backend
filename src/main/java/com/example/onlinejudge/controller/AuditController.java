@@ -11,6 +11,7 @@ import com.example.onlinejudge.entity.TestCase;
 import com.example.onlinejudge.mapper.EditRecordMapper;
 import com.example.onlinejudge.service.EditRecordService;
 import com.example.onlinejudge.service.ProblemService;
+import com.example.onlinejudge.vo.AuditQueryConditionVo;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -34,8 +35,8 @@ public class AuditController {
 
     @ApiOperation(tags = "审核管理",value = "分页获取待审核的更改申请",notes = "[不区分问题与用例] 参数: currentPage=当前页, pageSize=页大小")
     @GetMapping("/page")
-    public Result getPage(@RequestParam(defaultValue = "1") int currentPage, @RequestParam(defaultValue = "10") int pageSize) {
-        IPage<EditRecordDto> page = editRecordService.getPageDto(currentPage, pageSize, EditStatus.WAIT);
+    public Result getPage(@RequestParam(defaultValue = "1") int currentPage, @RequestParam(defaultValue = "10") int pageSize, AuditQueryConditionVo condition) {
+        IPage<EditRecordDto> page = editRecordService.getPageDto(currentPage, pageSize, condition.setStatus(EditStatus.WAIT.index()));
         return Result.success().data("page", page);
     }
 

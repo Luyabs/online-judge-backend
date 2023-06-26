@@ -5,6 +5,7 @@ import com.example.onlinejudge.constant.EditStatus;
 import com.example.onlinejudge.dto.EditRecordDto;
 import com.example.onlinejudge.entity.EditRecord;
 import com.example.onlinejudge.common.base.BaseService;
+import com.example.onlinejudge.vo.AuditQueryConditionVo;
 
 /**
  * <p>
@@ -16,7 +17,7 @@ import com.example.onlinejudge.common.base.BaseService;
  */
 public interface EditRecordService extends BaseService<EditRecord> {
 
-    IPage<EditRecordDto> getPageDto(int currentPage, int pageSize, EditStatus status);
+    IPage<EditRecordDto> getPageDto(int currentPage, int pageSize, AuditQueryConditionVo condition);
 
     EditRecordDto getByIdDtoNotNull(long editRecordId);
 }
