@@ -58,7 +58,7 @@ public class ProblemController {
         return Result.success().data("problem", problem);
     }
 
-    @ApiOperation(tags = "上传管理", value = "分页获取(我的上传)",
+    @ApiOperation(tags = "题目获取", value = "分页获取(我的上传)",
             notes = "参数: currentPage=当前页, pageSize=页大小, " +
                     "condition=条件查询{userId, title, content, type, difficulty, isVerified}")
     @GetMapping("/my_upload")

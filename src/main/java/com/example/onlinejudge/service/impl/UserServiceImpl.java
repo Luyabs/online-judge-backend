@@ -92,7 +92,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
                 .like(ObjectUtils.isNotEmpty(condition.getIntroduction()), "introduction", condition.getIntroduction())
                 .eq(ObjectUtils.isNotEmpty(condition.getIsBanned()), "is_banned", condition.getIsBanned())
                 .orderByDesc("role")
-                .orderByDesc("user_id");
+                .orderByAsc("user_id");
         return userMapper.selectPage(new Page<>(currentPage, pageSize), wrapper);
     }
 

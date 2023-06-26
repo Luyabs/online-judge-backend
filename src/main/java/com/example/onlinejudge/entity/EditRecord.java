@@ -38,16 +38,6 @@ public class EditRecord {
     private Long originalProblemId;
 
     /**
-     * 是否修改测试用例
-     */
-    private Boolean isTestCase;
-
-    /**
-     * 原始测试用例id
-     */
-    private Long originalTestCaseId;
-
-    /**
      * 修改行为
      */
     private Integer changeAction;
@@ -56,11 +46,6 @@ public class EditRecord {
      * 修改的临时题目id
      */
     private Long editProblemId;
-
-    /**
-     * 修改的临时用例id
-     */
-    private Long editTestCaseId;
 
     /**
      * 是否由管理员修改
