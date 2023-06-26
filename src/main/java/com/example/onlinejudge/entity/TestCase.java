@@ -63,16 +63,6 @@ public class TestCase {
     private Integer tOrder;
 
     /**
-     * 是否通过审核
-     */
-    private Boolean isVerified;
-
-    /**
-     * 审核附加信息
-     */
-    private String verifyMessage;
-
-    /**
      * 题目信息更新时间
      */
     @TableField(fill = FieldFill.INSERT_UPDATE)
