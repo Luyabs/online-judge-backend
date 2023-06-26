@@ -79,7 +79,6 @@ public class ProblemServiceImpl extends BaseServiceImpl<ProblemMapper, Problem> 
         BeanUtils.copyProperties(problemInputVo,newProblem);
         EditRecord newEditRecord = new EditRecord().
                 setUserId(UserInfo.getUserId()).
-                setIsTestCase(false).
                 setChangeAction(EditAction.INSERT.index()).
                 setIsAdmin(UserInfo.isAdmin()).
                 setStatus(EditStatus.WAIT.index());
@@ -109,7 +108,6 @@ public class ProblemServiceImpl extends BaseServiceImpl<ProblemMapper, Problem> 
         EditRecord newEditRecord = new EditRecord().
                 setUserId(UserInfo.getUserId()).
                 setOriginalProblemId(originalProblem.getProblemId()).
-                setIsTestCase(false).
                 setChangeAction(EditAction.UPDATE.index()).
                 setIsAdmin(UserInfo.isAdmin()).
                 setStatus(EditStatus.WAIT.index());
@@ -129,7 +127,6 @@ public class ProblemServiceImpl extends BaseServiceImpl<ProblemMapper, Problem> 
     public boolean deleteProblem(Long problemId) {
         EditRecord newEditRecord = new EditRecord().
                 setUserId(UserInfo.getUserId()).
-                setIsTestCase(false).
                 setOriginalProblemId(problemId).
                 setChangeAction(EditAction.DELETE.index()).
                 setIsAdmin(UserInfo.isAdmin()).
