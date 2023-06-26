@@ -61,38 +61,34 @@ public class TestCaseServiceImpl extends BaseServiceImpl<TestCaseMapper, TestCas
         EditRecord newEditRecord = new EditRecord().
                 setUserId(UserInfo.getUserId()).
                 setOriginalProblemId(testCase.getProblemId()).
-                setIsTestCase(true).
                 setChangeAction(EditAction.INSERT.index()).
                 setIsAdmin(UserInfo.isAdmin()).
                 setStatus(EditStatus.WAIT.index());
         if(testCaseMapper.insert(testCase) == 1){
-            newEditRecord.setOriginalTestCaseId(testCase.getTestCaseId());
             return editRecordMapper.insert(newEditRecord) == 1;
         }
         return false;
     }
 
     @Override
+    @Authority(author = true, admin = true)
     public Long modifyTestCase(TestCaseModifyVo testCaseModifyVo) {
         TestCase originalTestCase = getByIdNotNull(testCaseModifyVo.getTestCaseId());
 
         TestCase editTestCase = new TestCase();
         BeanUtils.copyProperties(originalTestCase,editTestCase);
-        editTestCase.setTestCaseId(null).setIsVerified(false);
+        editTestCase.setTestCaseId(null);
 
         testCaseModifyVo.setProblemId(null);                        //题目id无法修改
         BeanUtils.copyProperties(testCaseModifyVo,originalTestCase);
-        originalTestCase.setIsVerified(false);
 
         EditRecord newEditRecord = new EditRecord().
                 setUserId(UserInfo.getUserId()).
                 setOriginalProblemId(originalTestCase.getProblemId()).
-                setIsTestCase(true).
                 setChangeAction(EditAction.UPDATE.index()).
                 setIsAdmin(UserInfo.isAdmin()).
                 setStatus(EditStatus.WAIT.index());
         if(testCaseMapper.updateById(originalTestCase) == 1&&testCaseMapper.insert(editTestCase) == 1){
-            newEditRecord.setEditTestCaseId(editTestCase.getTestCaseId());
             if(editRecordService.save(newEditRecord))
                 return editTestCase.getProblemId();
         }
@@ -100,22 +96,15 @@ public class TestCaseServiceImpl extends BaseServiceImpl<TestCaseMapper, TestCas
     }
 
     @Override
+    @Authority(author = true, admin = true)
     public boolean deleteTestCase(Long testCaseId) {
         TestCase testCase = this.getByIdNotNull(testCaseId);
         EditRecord newEditRecord = new EditRecord().
                 setUserId(UserInfo.getUserId()).
                 setOriginalProblemId(testCase.getProblemId()).
-                setIsTestCase(true).
-                setOriginalTestCaseId(testCaseId).
                 setChangeAction(EditAction.DELETE.index()).
                 setIsAdmin(UserInfo.isAdmin()).
                 setStatus(EditStatus.WAIT.index());
         return testCaseMapper.updateById(testCase) == 1&&editRecordMapper.insert(newEditRecord) == 1;
-    }
-
-    @Override
-    public boolean auditTestCase(Long editRecordId, Boolean auditResult, String verifyMessage) {
-
-        return false;
     }
 }

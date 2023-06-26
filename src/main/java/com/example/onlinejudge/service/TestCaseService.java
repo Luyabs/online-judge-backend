@@ -21,6 +21,4 @@ public interface TestCaseService extends BaseService<TestCase> {
     Long modifyTestCase(TestCaseModifyVo testCaseModifyVo);
 
     boolean deleteTestCase(Long testCaseId);
-
-    boolean auditTestCase(Long editRecordId,Boolean auditResult,String verifyMessage);
 }
