@@ -42,9 +42,8 @@ public class TestCaseController {
     @ApiOperation(tags = "上传管理",value = "修改测试用例",notes = "参数: testCaseModifyVo")
     @PutMapping("/my_upload")
     public Result modifyTestCase(@RequestBody TestCaseModifyVo testCaseModifyVo){
-        Long testCaseId = testCaseService.modifyTestCase(testCaseModifyVo);
-        return testCaseId != null?
-                Result.success().data("newTestCaseID", testCaseId).data("testCaseModifyVo",testCaseModifyVo): Result.error();
+        boolean res = testCaseService.modifyTestCase(testCaseModifyVo);
+        return res? Result.success().data("testCaseModifyVo",testCaseModifyVo): Result.error();
     }
     @ApiOperation(tags = "上传管理", value = "删除测试用例",
             notes = "参数：用例Id")

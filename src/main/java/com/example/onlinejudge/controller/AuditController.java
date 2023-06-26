@@ -53,6 +53,6 @@ public class AuditController {
                                @RequestParam("auditResult") Boolean auditResult,
                                @RequestParam("verifyMessage") String verifyMessage){
         boolean res = problemService.auditProblem(editRecordId,auditResult,verifyMessage);
-        return res?Result.success().data("problemId", editRecordId).data("auditResult",auditResult):Result.error();
+        return res?Result.success():Result.error();
     }
 }

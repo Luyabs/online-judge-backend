@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.onlinejudge.common.aop.annotation.Authority;
 import com.example.onlinejudge.common.authentication.UserInfo;
+import com.example.onlinejudge.common.exception.exception.NotExistException;
 import com.example.onlinejudge.common.exception.exception.ServiceException;
 import com.example.onlinejudge.constant.EditAction;
 import com.example.onlinejudge.constant.EditStatus;
@@ -52,59 +53,27 @@ public class TestCaseServiceImpl extends BaseServiceImpl<TestCaseMapper, TestCas
     public boolean uploadTestCase(TestCaseInputVo testCaseInputVo) {
         Problem problem = problemMapper.selectById(testCaseInputVo.getProblemId());
         if(null == problem)
-            ServiceException.throwException("题目不存在");
+            NotExistException.throwException(testCaseInputVo.getProblemId(), "题目");
         if(problem.getStatus() != ProblemStatus.VERIFIED.index())
             ServiceException.throwException("题目未通过审核，无法提交用例");
         TestCase testCase = new TestCase();
         BeanUtils.copyProperties(testCaseInputVo,testCase);
-        //testCase.isverified默认为false
-        EditRecord newEditRecord = new EditRecord().
-                setUserId(UserInfo.getUserId()).
-                setOriginalProblemId(testCase.getProblemId()).
-                setChangeAction(EditAction.INSERT.index()).
-                setIsAdmin(UserInfo.isAdmin()).
-                setStatus(EditStatus.WAIT.index());
-        if(testCaseMapper.insert(testCase) == 1){
-            return editRecordMapper.insert(newEditRecord) == 1;
-        }
-        return false;
+        return testCaseMapper.insert(testCase) == 1;
     }
 
     @Override
     @Authority(author = true, admin = true)
-    public Long modifyTestCase(TestCaseModifyVo testCaseModifyVo) {
+    public boolean modifyTestCase(TestCaseModifyVo testCaseModifyVo) {
         TestCase originalTestCase = getByIdNotNull(testCaseModifyVo.getTestCaseId());
-
-        TestCase editTestCase = new TestCase();
-        BeanUtils.copyProperties(originalTestCase,editTestCase);
-        editTestCase.setTestCaseId(null);
-
-        testCaseModifyVo.setProblemId(null);                        //题目id无法修改
+        testCaseModifyVo.setProblemId(null);                //不修改题目id
         BeanUtils.copyProperties(testCaseModifyVo,originalTestCase);
-
-        EditRecord newEditRecord = new EditRecord().
-                setUserId(UserInfo.getUserId()).
-                setOriginalProblemId(originalTestCase.getProblemId()).
-                setChangeAction(EditAction.UPDATE.index()).
-                setIsAdmin(UserInfo.isAdmin()).
-                setStatus(EditStatus.WAIT.index());
-        if(testCaseMapper.updateById(originalTestCase) == 1&&testCaseMapper.insert(editTestCase) == 1){
-            if(editRecordService.save(newEditRecord))
-                return editTestCase.getProblemId();
-        }
-        return null;
+        return testCaseMapper.updateById(originalTestCase) == 1;
     }
 
     @Override
     @Authority(author = true, admin = true)
     public boolean deleteTestCase(Long testCaseId) {
         TestCase testCase = this.getByIdNotNull(testCaseId);
-        EditRecord newEditRecord = new EditRecord().
-                setUserId(UserInfo.getUserId()).
-                setOriginalProblemId(testCase.getProblemId()).
-                setChangeAction(EditAction.DELETE.index()).
-                setIsAdmin(UserInfo.isAdmin()).
-                setStatus(EditStatus.WAIT.index());
-        return testCaseMapper.updateById(testCase) == 1&&editRecordMapper.insert(newEditRecord) == 1;
+        return testCaseMapper.deleteById(testCaseId) == 1;
     }
 }

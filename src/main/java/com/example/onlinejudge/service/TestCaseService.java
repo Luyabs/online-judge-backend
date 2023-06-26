@@ -18,7 +18,7 @@ public interface TestCaseService extends BaseService<TestCase> {
 
     boolean uploadTestCase(TestCaseInputVo testCaseInputVo);
 
-    Long modifyTestCase(TestCaseModifyVo testCaseModifyVo);
+    boolean modifyTestCase(TestCaseModifyVo testCaseModifyVo);
 
     boolean deleteTestCase(Long testCaseId);
 }
