@@ -3,6 +3,8 @@ package com.example.onlinejudge.entity;
 import com.baomidou.mybatisplus.annotation.*;
 
 import java.time.LocalDateTime;
+
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -15,8 +17,7 @@ import lombok.experimental.Accessors;
  * @author Luyabs & 2020ljj
  * @since 2023-06-13 11:06:32
  */
-@Getter
-@Setter
+@Data
 @Accessors(chain = true)
 @TableName("tag")
 public class Tag {

@@ -3,6 +3,8 @@ package com.example.onlinejudge;
 import com.example.onlinejudge.common.authentication.StpRoleAndPermission;
 import com.example.onlinejudge.common.exception.exception.ValidateException;
 import com.example.onlinejudge.constant.ProblemDifficulty;
+import com.example.onlinejudge.entity.Submission;
+import com.example.onlinejudge.judgebox.fascade.JudgeBox;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,6 +18,9 @@ import static com.example.onlinejudge.common.exception.exception.ValidateExcepti
 public class NormalTest {
     @Autowired
     StpRoleAndPermission stp;
+
+    @Autowired
+    JudgeBox judgeBox;
 
     @Test
     void test01() {
@@ -46,5 +51,12 @@ public class NormalTest {
 
         ValidateException.throwIf(1 == 2, "1111=2222", NOT_NULL);
         ValidateException.throwIf(2 < 3, "2<<<<3", UNIQUE);
+    }
+
+    @Test
+    void test04() {
+        Submission submission = new Submission().setCode("123");
+        judgeBox.judge(submission);
+        System.out.println(submission);
     }
 }
