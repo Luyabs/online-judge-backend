@@ -20,4 +20,6 @@ public interface EditRecordService extends BaseService<EditRecord> {
     IPage<EditRecordDto> getPageDto(int currentPage, int pageSize, AuditQueryConditionVo condition);
 
     EditRecordDto getByIdDtoNotNull(long editRecordId);
+
+    EditRecord getOneByProblemId(long problemId);
 }

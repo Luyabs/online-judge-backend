@@ -11,6 +11,11 @@ import java.util.List;
 @Accessors(chain = true)
 public class EditRecordDto extends EditRecord {
     /**
+     * 题目id
+     */
+    private Long problemId;
+
+    /**
      * 题目标题
      */
     private String title;

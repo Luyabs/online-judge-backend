@@ -30,7 +30,7 @@ public interface EditRecordMapper extends BaseMapper<EditRecord> {
     IPage<EditRecordDto> selectPageDto(Page<Object> objectPage, @Param(Constants.WRAPPER) QueryWrapper<EditRecordDto> wrapper);
 
     @Select("""
-            select e.*, p.title
+            select e.*, p.problem_id, p.title
             from edit_record e
             join problem p on e.original_problem_id = p.problem_id
             where e.edit_record_id = #{edit_record_id}

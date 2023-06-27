@@ -15,6 +15,8 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * <p>
  *  服务实现类
@@ -44,5 +46,15 @@ public class EditRecordServiceImpl extends BaseServiceImpl<EditRecordMapper, Edi
         EditRecordDto editRecordDto = editRecordMapper.selectByIdDto(editRecordId);
         NotExistException.throwIf(editRecordDto == null, editRecordId, "修改记录");
         return editRecordDto;
+    }
+
+    @Override
+    public EditRecord getOneByProblemId(long problemId) {
+        List<EditRecord> editRecords = editRecordMapper.selectList(
+                new QueryWrapper<EditRecord>()
+                        .eq("original_problem_id", problemId)
+                        .orderByDesc("update_time")
+        );
+        return editRecords.isEmpty() ? null : editRecords.get(0);
     }
 }

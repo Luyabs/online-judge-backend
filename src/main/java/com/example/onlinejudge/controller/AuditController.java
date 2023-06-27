@@ -47,6 +47,13 @@ public class AuditController {
         return Result.success().data("editRecord", editRecord);
     }
 
+    @ApiOperation(tags = "审核管理",value = "按id获取更改申请(用于获取审核信息)",notes = "[不区分问题与用例] 参数: testCaseId")
+    @GetMapping("/by_problem_id/{problemId}")
+    public Result getOneByProblemId(@PathVariable(value = "problemId") long problemId) {
+        EditRecord editRecord = editRecordService.getOneByProblemId(problemId);
+        return Result.success().data("editRecord", editRecord);
+    }
+
     @ApiOperation(tags = "审核管理", value = "审核题目",
             notes = "参数：editRecordId, auditResult,verifyMessage")
     @PostMapping("/{editRecordId}")
