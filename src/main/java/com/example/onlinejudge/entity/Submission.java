@@ -38,6 +38,11 @@ public class Submission {
     private Long problemId;
 
     /**
+     * 选择语言
+     */
+    private Integer language;
+
+    /**
      * 提交代码
      */
     private String code;
