@@ -10,8 +10,7 @@ public class ResultWriter {
     @Autowired
     private SubmissionMapper submissionMapper;
 
-    public boolean write(Submission submission) {
+    public void write(Submission submission) {
         // TODO
-        return false;
     }
 }

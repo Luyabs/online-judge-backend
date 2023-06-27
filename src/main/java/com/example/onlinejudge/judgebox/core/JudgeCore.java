@@ -16,8 +16,8 @@ public class JudgeCore {
         return null;
     }
 
-    public boolean judge(Submission submission, List<TestCase> testCases) {
+    public Submission judge(Submission submission, List<TestCase> testCases) {
         // TODO
-        return false;
+        return null;
     }
 }

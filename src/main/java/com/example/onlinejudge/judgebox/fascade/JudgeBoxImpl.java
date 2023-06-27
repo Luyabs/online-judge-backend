@@ -7,6 +7,7 @@ import com.example.onlinejudge.judgebox.core.JudgeCore;
 import com.example.onlinejudge.judgebox.core.ResultWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -25,6 +26,7 @@ public class JudgeBoxImpl implements JudgeBox {
     private ResultWriter resultWriter;
 
     @Override
+    @Transactional
     public Submission judge(Submission submission) {
         List<TestCase> testCases = caseLoader.loadTestCase(submission);
         judgeCore.judge(submission, testCases);
