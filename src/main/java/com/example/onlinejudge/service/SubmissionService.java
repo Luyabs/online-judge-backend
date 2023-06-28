@@ -2,6 +2,7 @@ package com.example.onlinejudge.service;
 
 import com.example.onlinejudge.entity.Submission;
 import com.example.onlinejudge.common.base.BaseService;
+import com.example.onlinejudge.vo.SubmissionInputVo;
 
 /**
  * <p>
@@ -13,4 +14,5 @@ import com.example.onlinejudge.common.base.BaseService;
  */
 public interface SubmissionService extends BaseService<Submission> {
 
+    boolean uploadSubmission(SubmissionInputVo submissionInputVo);
 }

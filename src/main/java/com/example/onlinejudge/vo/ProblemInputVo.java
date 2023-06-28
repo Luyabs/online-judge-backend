@@ -29,7 +29,7 @@ public class ProblemInputVo {
     @NotNull
     private Integer difficulty;
 
-    @DecimalMax(value = "128.0")
+    @DecimalMax(value = "4096.0")
     @DecimalMin(value = "0.0")
     private Double runtimeLimit;
 

@@ -12,5 +12,5 @@ import javax.validation.constraints.NotBlank;
 public class TestCaseModifyVo extends TestCaseInputVo{
 
     @NotBlank
-    Long testCaseId;
+    private Long testCaseId;
 }

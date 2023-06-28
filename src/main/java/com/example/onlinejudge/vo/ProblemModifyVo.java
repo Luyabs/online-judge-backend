@@ -9,5 +9,5 @@ import javax.validation.constraints.NotNull;
 @Accessors(chain = true)
 public class ProblemModifyVo extends ProblemInputVo{
     @NotNull
-    Long problemId;
+    private Long problemId;
 }
