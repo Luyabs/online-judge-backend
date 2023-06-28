@@ -31,7 +31,7 @@ public class MysqlJudge implements Judge {
      */
     @Override
     public Submission judge(Submission submission, List<TestCase> testCases, double runTimeLimit) {
-        String code = submission.getCode();
+        String code = submission.getCode().trim().toLowerCase();
         if (code.split(";").length > 1) {
             return setSubmissionErrorType(submission, "在SQL题中你只能提交一句输入");
         }
@@ -42,6 +42,7 @@ public class MysqlJudge implements Judge {
         }
 
         boolean hasCheckedCodeTime = false;     // 是否已经测过用户提交的代码运行速度
+        boolean isRunOutOfTime = false;     // 是否超时
         int passNum = 0;    // 通过测试用例个数
         int preOrPostHandleNum = 0;  // 前置或后置处理用例个数
         for (TestCase testCase: testCases) {
@@ -53,14 +54,13 @@ public class MysqlJudge implements Judge {
                     continue;
                 }
                 else if (!hasCheckedCodeTime) { // 还没测过速 且不是前后置语句
-                    try {  // 运行一遍 以统计SQL时间 同时如果超时则杀死执行进程 正常情况下返回运算时间
-                        long time = queryTimeCalculating(code, runTimeLimit <= 1024 ? 1024 : runTimeLimit);
-                        System.out.println(time + " ms");
-                        if (time == -1)
-                            return setSubmissionErrorType(submission, "Time Limit: " + runTimeLimit);
-                        else
-                            submission.setRuntime(time);
-                    } catch (Exception ignored) { }
+                    // 运行一遍 以统计SQL时间 同时如果超时则杀死执行进程 正常情况下返回运算时间
+                    long time = queryTimeCalculating(code, runTimeLimit <= 1024 ? 1024 : runTimeLimit);
+                    System.out.println(time + " ms");
+                    if (time == -1)
+                        isRunOutOfTime = true;
+                    else
+                        submission.setRuntime(time);
                     hasCheckedCodeTime = true;
                 }
                 boolean testResult = (type == Type.DQL) ? executeDqlTestCaseOutputCode(submission, testCase) : executeDmlTestCaseOutputCode(submission, testCase);
@@ -68,7 +68,7 @@ public class MysqlJudge implements Judge {
             } catch (BadSqlGrammarException ex) {   // 抛掷的异常 都在这转给submission
                 String exMessage = ex.getMessage();
                 if (!StringUtils.isBlank(exMessage) && exMessage.startsWith("PreparedStatementCallback; bad SQL grammar")) {
-                    return setSubmissionErrorType(submission,exMessage.split(";")[1]);
+                    return setSubmissionErrorType(submission,"语法错误: " + exMessage.split("PreparedStatementCallback;")[1]);
                 }
                 return setSubmissionErrorType(submission,exMessage);
             } catch (ServiceException ex) {
@@ -77,7 +77,10 @@ public class MysqlJudge implements Judge {
         }
         submission.setPassTestCaseNum(passNum); // 设置结果
         if (passNum == testCases.size() - preOrPostHandleNum) {
-            return submission.setIsSuccess(true);
+            if (isRunOutOfTime)
+                return setSubmissionErrorType(submission, "Runtime Limit: " + runTimeLimit);    // 超时 (超时若放在前判会影响错误判断)
+            else
+                return submission.setIsSuccess(true);
         }
         else {
             return setSubmissionErrorType(submission, "Wrong Answer");
@@ -109,10 +112,10 @@ public class MysqlJudge implements Judge {
         String code = submission.getCode();
         // 执行用户代码 和 output中的select语句
         String output = testCase.getOutput();
-        if (getCodeType(output) != Type.DQL)
-            ServiceException.throwException("[测试用例异常] 该OUTPUT语句应为DQL");
+        if (getCodeType(output) != Type.DQL) {
+            return false;
+        }
         // 判断结果是否正确
-
         List<List<Object>> submissionAnswer = jdbcTemplateBean.query(code);
         List<List<Object>> trueAnswer = jdbcTemplateBean.query(output);
         return submissionAnswer.equals(trueAnswer);
@@ -125,10 +128,13 @@ public class MysqlJudge implements Judge {
     private boolean executeDmlTestCaseOutputCode(Submission submission, TestCase testCase) {
         String code = submission.getCode();
         // 执行用户代码 和 output中的select语句
-        int output = Integer.parseInt(testCase.getOutput());
+        String output = testCase.getOutput();
+        if (getCodeType(output) != Type.DML) {
+            return false;
+        }
         // 判断结果是否正确
         int submissionAnswer = jdbcTemplateBean.update(code);
-        return submissionAnswer == output;
+        return submissionAnswer == Integer.parseInt(output);
     }
 
     /**
@@ -188,7 +194,10 @@ public class MysqlJudge implements Judge {
                 double startTime = getStartTimeWithoutNetWorkLag();
                 jdbcTemplateBean.execute(sql);
                 executeTime[0] = (long) (System.currentTimeMillis() - startTime);
-            } catch (Exception ignored) { }
+            }
+            catch (Exception ex) {
+                ex.printStackTrace();
+            }
         });
         queryThread.start();
 
