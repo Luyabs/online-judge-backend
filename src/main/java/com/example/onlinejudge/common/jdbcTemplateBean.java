@@ -1,10 +1,9 @@
-package com.example.onlinejudge;
+package com.example.onlinejudge.common;
 
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,17 +11,29 @@ import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
 import java.util.List;
 
-@SpringBootTest
-public class JdbcTemplateTest {
+@Component
+public class jdbcTemplateBean {
     @Autowired
-    @Qualifier("primaryJdbcTemplate")
 //    @Qualifier("secondaryJdbcTemplate")
-    private JdbcTemplate secondaryJdbcTemplate;
+    @Qualifier("primaryJdbcTemplate")
+    private JdbcTemplate jdbcTemplate;
 
+    /**
+     * 通过jdbctemplate执行Ddl
+     * @param sql DDL
+     */
+    public void execute(String sql) {
+        jdbcTemplate.execute(sql);
+        System.out.println("[execute]\n" + sql);
+    }
 
-    @Test
-    void test04() {
-        secondaryJdbcTemplate.execute("SELECT * FROM user", (PreparedStatement ps) -> {
+    /**
+     * 通过jdbctemplate执行DQL
+     * @param sql DQL
+     */
+    public List<List<Object>> query(String sql) {
+        System.out.println("[query]\n" + sql);
+        return jdbcTemplate.execute(sql, (PreparedStatement ps) -> {
             try (ResultSet rs = ps.executeQuery()) {    // ==> ps.query(); ResultSet rs = ps.getResultSet();
                 ResultSetMetaData metaData = rs.getMetaData(); // 记录集统计数据
                 List<List<Object>> results = new ArrayList<>();
@@ -39,12 +50,11 @@ public class JdbcTemplateTest {
         });
     }
 
-    @Test
-    void test05() {
-        secondaryJdbcTemplate.execute("update user set nickname = '丁真' where username like '%理塘丁真%'", (PreparedStatement ps) -> {
-            int count = ps.executeUpdate();
-            System.out.println(count);
-            return count;
-        });
+    /**
+     * 通过jdbctemplate执行DML
+     */
+    public int update(String sql) {
+        System.out.println("[update]\n" + sql);
+        return jdbcTemplate.update(sql);
     }
 }

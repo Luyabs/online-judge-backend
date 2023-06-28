@@ -1,26 +1,14 @@
 package com.example.onlinejudge;
 
-import com.example.onlinejudge.common.JdbcTemplateBean;
 import com.example.onlinejudge.common.authentication.StpRoleAndPermission;
 import com.example.onlinejudge.common.exception.exception.ValidateException;
 import com.example.onlinejudge.constant.ProblemDifficulty;
-import com.example.onlinejudge.entity.Submission;
-import com.example.onlinejudge.entity.User;
 import com.example.onlinejudge.judgebox.fascade.JudgeBox;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.annotation.Resource;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static com.example.onlinejudge.common.exception.exception.ValidateException.NOT_NULL;
 import static com.example.onlinejudge.common.exception.exception.ValidateException.UNIQUE;

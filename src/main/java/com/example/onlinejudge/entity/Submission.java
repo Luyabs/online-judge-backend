@@ -56,7 +56,7 @@ public class Submission {
     /**
      * 是否运行成功
      */
-    private Integer isSuccess;
+    private Boolean isSuccess;
 
     /**
      * 错误类型

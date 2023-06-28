@@ -13,7 +13,11 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 /**
- * 判题核心
+ * 判题核心 <br/>
+ * 负责根据题目采用语言调度不同语言的判题器 <br/>
+ * 负责使用判题器与测试用例对用户的提交进行判题 <br/>
+ * 如果判题过程中产生了问题或结果，(如Wrong Answer, 沙箱抛掷异常等)那么会记录在submission中 <br/>
+ * 判题核心同样不会进行数据库存储 <br/>
  */
 @Component
 public class JudgeCore {

@@ -15,7 +15,12 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 
 /**
- * 判题结果输出器
+ * 判题结果输出器 <br/>
+ * 可以设置不同的策略来以不同方式持久化的保存submission <br/>
+ * 提供以下三种保存submission的方式: <br/>
+ * DATABASE: 作为记录保存到数据库中Submission表中 <br/>
+ * FILE: 作为文件保存到项目目录下 <br/>
+ * CONSOLE: 只在控制台中输出,不保存 <br/>
  */
 @Component
 @Data

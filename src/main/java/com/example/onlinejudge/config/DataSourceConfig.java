@@ -48,7 +48,7 @@ public class DataSourceConfig {
      * 为OJ判题机准备的JdbcTemplate
      * @param dataSource secondaryDataSource
      */
-    @Primary
+//    @Primary
     @Bean(name = "secondaryJdbcTemplate")
     public JdbcTemplate secondaryJdbcTemplate(@Qualifier("secondaryDataSource") DataSource dataSource) {
         return new JdbcTemplate(dataSource);
