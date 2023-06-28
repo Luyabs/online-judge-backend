@@ -82,6 +82,10 @@ public class ProblemServiceImpl extends BaseServiceImpl<ProblemMapper, Problem> 
                 setChangeAction(EditAction.INSERT.index()).
                 setIsAdmin(UserInfo.isAdmin()).
                 setStatus(EditStatus.WAIT.index());
+        if(UserInfo.isAdmin()){         //管理员直接通过申请
+            newProblem.setStatus(ProblemStatus.VERIFIED.index());
+            newEditRecord.setStatus(EditStatus.VERIFIED.index());
+        }
         if(problemMapper.insert(newProblem) == 1){
             newEditRecord.setOriginalProblemId(newProblem.getProblemId());
             return  editRecordMapper.insert(newEditRecord) == 1;
@@ -111,6 +115,10 @@ public class ProblemServiceImpl extends BaseServiceImpl<ProblemMapper, Problem> 
                 setChangeAction(EditAction.UPDATE.index()).
                 setIsAdmin(UserInfo.isAdmin()).
                 setStatus(EditStatus.WAIT.index());
+        if(UserInfo.isAdmin()){
+            originalProblem.setStatus(ProblemStatus.VERIFIED.index());
+            newEditRecord.setStatus(EditStatus.VERIFIED.index());
+        }
         //修改旧数据状态同时插入新数据
         if(problemMapper.updateById(originalProblem) == 1&&problemMapper.insert(editProblem) == 1){
             newEditRecord.setEditProblemId(editProblem.getProblemId());
@@ -135,8 +143,14 @@ public class ProblemServiceImpl extends BaseServiceImpl<ProblemMapper, Problem> 
         int status = oldProblem.getStatus();
         if(status == ProblemStatus.VERIFYING.index()||status == ProblemStatus.HISTORY.index())
             ServiceException.throwException("该状态（审核中/历史）下题目无法删除");
-        oldProblem.setStatus(ProblemStatus.VERIFYING.index());//只修改problem转态，删除操作留待管理员处理
-        return problemMapper.updateById(oldProblem) == 1 && editRecordMapper.insert(newEditRecord) == 1;
+        if(UserInfo.isAdmin()){
+            return problemMapper.deleteById(problemId) == 1;    //直接删，不留任何记录
+        }
+        else{
+            oldProblem.setStatus(ProblemStatus.VERIFYING.index());//只修改problem转态，删除操作留待管理员处理
+            return problemMapper.updateById(oldProblem) == 1 && editRecordMapper.insert(newEditRecord) == 1;
+        }
+
     }
 
     @Override
