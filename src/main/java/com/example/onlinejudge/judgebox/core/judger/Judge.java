@@ -9,5 +9,5 @@ import java.util.List;
  * 判题接口
  */
 public interface Judge {
-    Submission judge(Submission submission, List<TestCase> testCases);
+    Submission judge(Submission submission, List<TestCase> testCases, double runTimeLimit);
 }

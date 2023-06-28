@@ -12,7 +12,7 @@ import java.util.List;
 @Component
 public class JavaJudge implements Judge {
     @Override
-    public Submission judge(Submission submission, List<TestCase> testCases) {
+    public Submission judge(Submission submission, List<TestCase> testCases, double runTimeLimit) {
         // TODO
         return null;
     }

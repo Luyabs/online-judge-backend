@@ -36,7 +36,7 @@ public class CaseLoader {
      * 校验problem是否存在
      * @return problemId
      */
-    private Problem preCheckProblem(Submission submission) {
+    public Problem preCheckProblem(Submission submission) {
         if (submission.getProblemId() == null)
             NotExistException.throwException("submission缺失problemId属性");
         long problemId = submission.getProblemId();
@@ -53,8 +53,7 @@ public class CaseLoader {
      * 读取测试用例
      * @return 问题对应的测试用例
      */
-    public List<TestCase> loadTestCase(Submission submission) {
-        Problem problem = preCheckProblem(submission);
+    public List<TestCase> loadTestCase(Problem problem) {
         QueryWrapper<TestCase> wrapper = new QueryWrapper<TestCase>().eq("problem_id", problem.getProblemId());
         List<TestCase> testCases = testCaseMapper.selectList(wrapper);
         if (testCases.isEmpty())     // 检查没有测试用例的情况

@@ -1,6 +1,7 @@
 package com.example.onlinejudge.judgebox.fascade;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
+import com.example.onlinejudge.entity.Problem;
 import com.example.onlinejudge.entity.Submission;
 import com.example.onlinejudge.entity.TestCase;
 import com.example.onlinejudge.judgebox.core.CaseLoader;
@@ -34,8 +35,9 @@ public class JudgeBoxImpl implements JudgeBox {
     @Override
     @Transactional
     public Submission judge(Submission submission) {
-        List<TestCase> testCases = caseLoader.loadTestCase(submission);
-        judgeCore.judge(submission, testCases);
+        Problem problem = caseLoader.preCheckProblem(submission);
+        List<TestCase> testCases = caseLoader.loadTestCase(problem);
+        judgeCore.judge(submission, testCases, problem.getRuntimeLimit());
         resultWriter.write(submission);
         return submission;
     }

@@ -8,11 +8,12 @@ import org.springframework.stereotype.Component;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class jdbcTemplateBean {
+public class JdbcTemplateBean {
     @Autowired
     @Qualifier("secondaryJdbcTemplate")
     private JdbcTemplate jdbcTemplate;
@@ -23,7 +24,6 @@ public class jdbcTemplateBean {
      */
     public void execute(String sql) {
         jdbcTemplate.execute(sql);
-        System.out.println("[execute]\n" + sql);
     }
 
     /**
@@ -31,7 +31,6 @@ public class jdbcTemplateBean {
      * @param sql DQL
      */
     public List<List<Object>> query(String sql) {
-        System.out.println("[query]\n" + sql);
         return jdbcTemplate.execute(sql, (PreparedStatement ps) -> {
             try (ResultSet rs = ps.executeQuery()) {    // ==> ps.query(); ResultSet rs = ps.getResultSet();
                 ResultSetMetaData metaData = rs.getMetaData(); // 记录集统计数据
@@ -43,7 +42,6 @@ public class jdbcTemplateBean {
                     }
                     results.add(result);
                 }
-                System.out.println(results);
                 return results;
             }
         });
@@ -53,7 +51,10 @@ public class jdbcTemplateBean {
      * 通过jdbctemplate执行DML
      */
     public int update(String sql) {
-        System.out.println("[update]\n" + sql);
         return jdbcTemplate.update(sql);
+    }
+
+    public String getUrl() throws SQLException {
+        return jdbcTemplate.getDataSource().getConnection().getMetaData().getURL();
     }
 }

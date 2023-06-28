@@ -1,7 +1,7 @@
 package com.example.onlinejudge.judgebox.core.judger;
 
+import com.example.onlinejudge.common.JdbcTemplateBean;
 import com.example.onlinejudge.common.exception.exception.ServiceException;
-import com.example.onlinejudge.common.jdbcTemplateBean;
 import com.example.onlinejudge.entity.Submission;
 import com.example.onlinejudge.entity.TestCase;
 import org.apache.commons.lang3.StringUtils;
@@ -9,8 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.stereotype.Component;
 
+import java.net.InetAddress;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Mysql判题机
@@ -23,15 +23,14 @@ public class MysqlJudge implements Judge {
         DDL,
         NULL
     }
-
     @Autowired
-    private jdbcTemplateBean jdbcTemplateBean;
+    private JdbcTemplateBean jdbcTemplateBean;
 
     /**
      * 外观判断方法，只允许外部类调用此方法
      */
     @Override
-    public Submission judge(Submission submission, List<TestCase> testCases) {
+    public Submission judge(Submission submission, List<TestCase> testCases, double runTimeLimit) {
         String code = submission.getCode();
         if (code.split(";").length > 1) {
             return setSubmissionErrorType(submission, "在SQL题中你只能提交一句输入");
@@ -42,6 +41,7 @@ public class MysqlJudge implements Judge {
             return setSubmissionErrorType(submission, "只允许提交DQL与DML语句");
         }
 
+        boolean hasCheckedCodeTime = false;     // 是否已经测过用户提交的代码运行速度
         int passNum = 0;    // 通过测试用例个数
         int preOrPostHandleNum = 0;  // 前置或后置处理用例个数
         for (TestCase testCase: testCases) {
@@ -52,7 +52,18 @@ public class MysqlJudge implements Judge {
                     preOrPostHandleNum++;  // 前后置处理语句
                     continue;
                 }
-                boolean testResult = (type == Type.DQL) ? executeDqlTestCaseOutputCode(code, testCase) : executeDmlTestCaseOutputCode(code, testCase);
+                else if (!hasCheckedCodeTime) { // 还没测过速 且不是前后置语句
+                    try {  // 运行一遍 以统计SQL时间 同时如果超时则杀死执行进程 正常情况下返回运算时间
+                        long time = queryTimeCalculating(code, runTimeLimit);
+                        System.out.println(time + " ms");
+                        if (time == -1)
+                            return setSubmissionErrorType(submission, "Time Limit");
+                        else
+                            submission.setRuntime(time);
+                    } catch (Exception ignored) { }
+                    hasCheckedCodeTime = true;
+                }
+                boolean testResult = (type == Type.DQL) ? executeDqlTestCaseOutputCode(submission, testCase) : executeDmlTestCaseOutputCode(submission, testCase);
                 passNum += testResult ? 1 : 0;  // 测试用例通过则增加通过数
             } catch (BadSqlGrammarException ex) {   // 抛掷的异常 都在这转给submission
                 String exMessage = ex.getMessage();
@@ -92,15 +103,16 @@ public class MysqlJudge implements Judge {
 
     /**
      * 测试类型为DQL的问题 输出
-     * @param code DQL
      * @param testCase input: DML(多句), output: DQL(单句) (若为pre/posthandle 则input: DDL(多句) output: null)
      */
-    private boolean executeDqlTestCaseOutputCode(String code, TestCase testCase) {
+    private boolean executeDqlTestCaseOutputCode(Submission submission, TestCase testCase) {
+        String code = submission.getCode();
         // 执行用户代码 和 output中的select语句
         String output = testCase.getOutput();
         if (getCodeType(output) != Type.DQL)
             ServiceException.throwException("[测试用例异常] 该OUTPUT语句应为DQL");
         // 判断结果是否正确
+
         List<List<Object>> submissionAnswer = jdbcTemplateBean.query(code);
         List<List<Object>> trueAnswer = jdbcTemplateBean.query(output);
         return submissionAnswer.equals(trueAnswer);
@@ -108,10 +120,10 @@ public class MysqlJudge implements Judge {
 
     /**
      * 测试类型为DML的问题 输出
-     * @param code DML
      * @param testCase input: null, output: int(表示修改行行数) (若为pre/posthandle 则input: DDL(多句) output: null)
      */
-    private boolean executeDmlTestCaseOutputCode(String code, TestCase testCase) {
+    private boolean executeDmlTestCaseOutputCode(Submission submission, TestCase testCase) {
+        String code = submission.getCode();
         // 执行用户代码 和 output中的select语句
         int output = Integer.parseInt(testCase.getOutput());
         // 判断结果是否正确
@@ -120,7 +132,7 @@ public class MysqlJudge implements Judge {
     }
 
     /**
-     * 根据句首判断是DQL DML DDL·
+     * 根据句首判断是DQL DML DDL
      */
     private Type getCodeType(String code) {
         if (StringUtils.isBlank(code))
@@ -128,11 +140,10 @@ public class MysqlJudge implements Judge {
         code = code.trim().toLowerCase();
         if (code.startsWith("select"))
             return Type.DQL;
-        else if (code.startsWith("update") || code.startsWith("insert") || code.startsWith("delete"))
+        else if (code.startsWith("update") || code.startsWith("insert") || code.startsWith("delete") || code.startsWith("truncate table"))
             return Type.DML;
-        else if (code.startsWith("create table") || code.startsWith("drop table")) {
+        else if (code.startsWith("create table") || code.startsWith("drop table"))
             return Type.DDL;
-        }
         else
             return Type.NULL;
     }
@@ -144,5 +155,53 @@ public class MysqlJudge implements Judge {
         submission.setIsSuccess(false);
         submission.setErrorType(errorType);
         return submission;
+    }
+
+    /**
+     * 获取开始时间 (已补偿网络时延 (ms级精度))
+     */
+    private long getStartTimeWithoutNetWorkLag() {
+        long lag;
+        try {
+            String targetDatabase = jdbcTemplateBean.getUrl().split("//")[1].split(":")[0];
+            InetAddress address = InetAddress.getByName(targetDatabase);
+            long startPingTime = System.currentTimeMillis();
+            boolean isReachable = address.isReachable(5000); // 设置超时时间为5秒
+            lag = System.currentTimeMillis() - startPingTime;
+//            System.out.println("lag: " +lag);
+        } catch (Exception ex) {
+            // 此方法可能会因超时被打断
+            throw new ServiceException(ex.getMessage());
+        }
+        return lag + System.currentTimeMillis();     // 现在时间 + 网络时延
+    }
+
+    /**
+     * 运行时间统计
+     * 会通过新线程执行一遍最基础的SQL，如果超时则杀死该线程
+     */
+    private long queryTimeCalculating(String sql, double runTimeLimit) {
+        final long[] executeTime = {-1}; // SQL允许时间
+
+        Thread queryThread = new Thread(() -> {
+            try {
+                double startTime = getStartTimeWithoutNetWorkLag();
+                jdbcTemplateBean.execute(sql);
+                executeTime[0] = (long) (System.currentTimeMillis() - startTime);
+            } catch (Exception ignored) { }
+        });
+        queryThread.start();
+
+        try {
+            Thread.sleep((long) runTimeLimit);      // 时间允许限制
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        // 如果执行时间超过设定时间，中断 SQL 执行线程
+        if (queryThread.isAlive()) {
+            queryThread.interrupt();
+        }
+        return executeTime[0];
     }
 }

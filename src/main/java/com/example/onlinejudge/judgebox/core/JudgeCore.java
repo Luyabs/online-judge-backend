@@ -36,8 +36,8 @@ public class JudgeCore {
         };
     }
 
-    public Submission judge(Submission submission, List<TestCase> testCases) {
+    public Submission judge(Submission submission, List<TestCase> testCases, double runTimeLimit) {
         Judge languageJudge = judgeFactory(submission);
-        return languageJudge.judge(submission, testCases);
+        return languageJudge.judge(submission, testCases, runTimeLimit);
     }
 }
