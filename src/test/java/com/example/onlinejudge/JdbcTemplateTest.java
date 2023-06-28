@@ -15,8 +15,8 @@ import java.util.List;
 @SpringBootTest
 public class JdbcTemplateTest {
     @Autowired
-    @Qualifier("primaryJdbcTemplate")
-//    @Qualifier("secondaryJdbcTemplate")
+//    @Qualifier("primaryJdbcTemplate")
+    @Qualifier("secondaryJdbcTemplate")
     private JdbcTemplate secondaryJdbcTemplate;
 
 

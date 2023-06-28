@@ -14,8 +14,7 @@ import java.util.List;
 @Component
 public class jdbcTemplateBean {
     @Autowired
-//    @Qualifier("secondaryJdbcTemplate")
-    @Qualifier("primaryJdbcTemplate")
+    @Qualifier("secondaryJdbcTemplate")
     private JdbcTemplate jdbcTemplate;
 
     /**

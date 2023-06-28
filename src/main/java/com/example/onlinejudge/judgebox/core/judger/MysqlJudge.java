@@ -25,7 +25,7 @@ public class MysqlJudge implements Judge {
     }
 
     @Autowired
-    private com.example.onlinejudge.common.jdbcTemplateBean jdbcTemplateBean;
+    private jdbcTemplateBean jdbcTemplateBean;
 
     /**
      * 外观判断方法，只允许外部类调用此方法
