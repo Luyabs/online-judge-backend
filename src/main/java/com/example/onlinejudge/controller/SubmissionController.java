@@ -32,7 +32,7 @@ public class SubmissionController{
     @ApiOperation(tags = "做题管理", value = "提交答案", notes = "参数：题目Id，代码语言，代码，是否调试")
     @PostMapping
     public Result uploadSubmission(@Valid @RequestBody SubmissionInputVo submissionInputVo){
-        boolean res = submissionService.uploadSubmission(submissionInputVo);
-        return res?Result.success().data("submissionInputVo", submissionInputVo):Result.error();
+        Submission sub = submissionService.uploadSubmission(submissionInputVo);
+        return Result.success().data("submission", sub);
     }
 }

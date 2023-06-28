@@ -14,5 +14,5 @@ import com.example.onlinejudge.vo.SubmissionInputVo;
  */
 public interface SubmissionService extends BaseService<Submission> {
 
-    boolean uploadSubmission(SubmissionInputVo submissionInputVo);
+    Submission uploadSubmission(SubmissionInputVo submissionInputVo);
 }

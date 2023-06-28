@@ -54,10 +54,10 @@ public class MysqlJudge implements Judge {
                 }
                 else if (!hasCheckedCodeTime) { // 还没测过速 且不是前后置语句
                     try {  // 运行一遍 以统计SQL时间 同时如果超时则杀死执行进程 正常情况下返回运算时间
-                        long time = queryTimeCalculating(code, runTimeLimit);
+                        long time = queryTimeCalculating(code, runTimeLimit <= 1024 ? 1024 : runTimeLimit);
                         System.out.println(time + " ms");
                         if (time == -1)
-                            return setSubmissionErrorType(submission, "Time Limit");
+                            return setSubmissionErrorType(submission, "Time Limit: " + runTimeLimit);
                         else
                             submission.setRuntime(time);
                     } catch (Exception ignored) { }
