@@ -1,8 +1,14 @@
 package com.example.onlinejudge.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.onlinejudge.common.aop.annotation.Authority;
 import com.example.onlinejudge.common.authentication.UserInfo;
 import com.example.onlinejudge.common.exception.exception.ServiceException;
 import com.example.onlinejudge.constant.ProblemStatus;
+import com.example.onlinejudge.dto.ProblemDto;
+import com.example.onlinejudge.dto.StatisticsDto;
 import com.example.onlinejudge.entity.Problem;
 import com.example.onlinejudge.entity.Submission;
 import com.example.onlinejudge.judgebox.fascade.JudgeBox;
@@ -30,6 +36,8 @@ public class SubmissionServiceImpl extends BaseServiceImpl<SubmissionMapper, Sub
 
     @Autowired
     private JudgeBox judgeBox;
+    @Autowired
+    private SubmissionMapper submissionMapper;
 
     @Override
     public Submission uploadSubmission(SubmissionInputVo submissionInputVo) {
@@ -37,4 +45,36 @@ public class SubmissionServiceImpl extends BaseServiceImpl<SubmissionMapper, Sub
         BeanUtils.copyProperties(submissionInputVo, submission);
         return judgeBox.judge(submission);
     }
+
+    @Override
+    @Authority(author = true, admin = true)
+    public Submission getSubmission(Long submissionId) {
+        return getByIdNotNull(submissionId);
+    }
+
+
+    @Override
+    public IPage<Submission> getSubmissionPage(int currentPage, int pageSize) {
+        QueryWrapper<Submission> wrapper = new QueryWrapper<Submission>().
+                eq("user_id",UserInfo.getUserId()).
+                orderByDesc("insert_time");
+        return submissionMapper.selectPage(new Page<>(currentPage, pageSize), wrapper);
+    }
+
+    @Override
+    public StatisticsDto getStatistics() {
+        StatisticsDto statisticsDto = new StatisticsDto();
+        QueryWrapper<Submission> wrapper;
+        wrapper = new QueryWrapper<Submission>().eq("user_id",UserInfo.getUserId());
+        statisticsDto.setTotalSubmissionNumber(submissionMapper.selectCount(wrapper));
+
+        wrapper.eq("is_success",true);
+        statisticsDto.setPassedSubmissionNumber(submissionMapper.selectCount(wrapper));
+        statisticsDto.setTotalProblemNumber(submissionMapper.getTotalProblemNumber(UserInfo.getUserId()));
+        statisticsDto.setPassedProblemNumber(submissionMapper.getPassedProblemNumber(UserInfo.getUserId()));
+
+        return statisticsDto;
+    }
+
+
 }

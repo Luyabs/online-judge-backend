@@ -4,7 +4,10 @@ import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.onlinejudge.common.Result;
+import com.example.onlinejudge.dto.StatisticsDto;
+import com.example.onlinejudge.entity.Submission;
 import com.example.onlinejudge.entity.User;
+import com.example.onlinejudge.service.SubmissionService;
 import com.example.onlinejudge.service.UserService;
 import com.example.onlinejudge.vo.*;
 import io.swagger.annotations.ApiOperation;
@@ -24,6 +27,9 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private SubmissionService submissionService;
 
     @ApiOperation(tags = "登录注册管理", value = "登录", notes = "传入username和password")
     @PostMapping("/login")
@@ -80,5 +86,19 @@ public class UserController {
     public Result reverseIsBanned(@PathVariable(value = "userId") Long userId) {
         boolean res = userService.reverseIsBanned(userId);
         return res ? Result.success().message("封禁状态调整成功") : Result.error();
+    }
+
+    @ApiOperation(tags = "统计管理",value = "查询用户提交历史", notes = "参数：页索引，页大小")
+    @GetMapping("/submissions")
+    public Result getSubmissionHistory(@RequestParam(defaultValue = "1") int currentPage, @RequestParam(defaultValue = "10") int pageSize){
+        IPage<Submission> page= submissionService.getSubmissionPage(currentPage,pageSize);
+        return Result.success().data("page", page);
+    }
+
+    @ApiOperation(tags = "统计管理",value = "查询用户做题数据", notes = "参数：无")
+    @GetMapping("/statistics")
+    public Result getStatistics(){
+        StatisticsDto statisticsDto = submissionService.getStatistics();
+        return Result.success().data("statistics", statisticsDto);
     }
 }
