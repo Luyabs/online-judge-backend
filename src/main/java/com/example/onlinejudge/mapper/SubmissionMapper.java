@@ -27,16 +27,27 @@ public interface SubmissionMapper extends BaseMapper<Submission> {
     @Select("select count(distinct problem_id) from submission where user_id = ${userId} and is_success = 1;")
     Long getPassedProblemNumber(@Param("userId") Long userId);
     @Select("""
-            <script>
-            select ;
-            </script>
+            select
+                IFNULL(SUM(CASE WHEN p.difficulty = 1 THEN 1 ELSE 0 END),0) AS easyCount,
+                IFNULL(SUM(CASE WHEN p.difficulty = 2 THEN 1 ELSE 0 END),0) AS mediumCount,
+                IFNULL(SUM(CASE WHEN p.difficulty = 3 THEN 1 ELSE 0 END),0) AS hardCount
+            from problem p
+            where p.problem_id in (
+                select distinct p.problem_id from submission s
+                    join problem p on p.problem_id = s.problem_id
+                        where s.user_id = 1 and is_success = 1);
             """)
-    HashMap<String,Integer> getProNumByDifficulty(List<Integer> difficultyList);
+    HashMap<String,Long> getProNumByDifficulty();
 
     @Select("""
-            <script>
-            select ;
-            </script>
+            select
+                IFNULL(SUM(CASE WHEN p.type = 1 THEN 1 ELSE 0 END),0) AS sqlCount,
+                IFNULL(SUM(CASE WHEN p.type = 2 THEN 1 ELSE 0 END),0) AS javaCount
+            from problem p
+            where p.problem_id in (
+                select distinct p.problem_id from submission s
+                    join problem p on p.problem_id = s.problem_id
+                        where s.user_id = 1 and is_success = 1);
             """)
-    HashMap<String,Integer> getProNumByType(List<Integer> typeList);
+    HashMap<String,Long> getProNumByType();
 }

@@ -1,7 +1,5 @@
 package com.example.onlinejudge.dto;
 
-import com.example.onlinejudge.entity.pojo.ProNumByDifficulty;
-import io.swagger.models.auth.In;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -14,31 +12,31 @@ public class StatisticsDto {
     /**
      * 总提交次数
      */
-    private Long totalSubmissionNumber;
+    private Long totalSubmissionCount;
 
     /**
      * 通过的提交数
      */
-    private Long passedSubmissionNumber;
+    private Long passedSubmissionCount;
 
     /**
-     * 完成的题目数量
+     * 通过的题目数量
      */
-    private Long passedProblemNumber;
+    private Long passedProblemCount;
 
     /**
-     * 题目总数
+     * 做过的题目总数
      */
-    private Long totalProblemNumber;
+    private Long totalProblemCount;
 
     /**
      * 通过的题目数量（按难度分属性）
      */
-    private HashMap<String,Integer> ProNumDiff;
+    private HashMap<String,Long> ProNumbyDiff;
 
     /**
      * 通过的题目数量（按题目类型分属性）
      */
-    private HashMap<String,Integer> ProNumType;
+    private HashMap<String,Long> ProNumbyType;
 
 }
