@@ -18,6 +18,7 @@ public class JdbcTemplateBean {
     @Qualifier("secondaryJdbcTemplate")
     private JdbcTemplate jdbcTemplate;
 
+    private String dbUrl;
     /**
      * 通过jdbctemplate执行Ddl
      * @param sql DDL
@@ -55,6 +56,8 @@ public class JdbcTemplateBean {
     }
 
     public String getUrl() throws SQLException {
-        return jdbcTemplate.getDataSource().getConnection().getMetaData().getURL();
+        if (dbUrl == null && jdbcTemplate.getDataSource() != null)
+            dbUrl = jdbcTemplate.getDataSource().getConnection().getMetaData().getURL();
+        return dbUrl;
     }
 }

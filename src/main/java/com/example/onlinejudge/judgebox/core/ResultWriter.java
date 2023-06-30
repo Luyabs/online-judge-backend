@@ -1,6 +1,8 @@
 package com.example.onlinejudge.judgebox.core;
 
+import com.example.onlinejudge.entity.Problem;
 import com.example.onlinejudge.entity.Submission;
+import com.example.onlinejudge.mapper.ProblemMapper;
 import com.example.onlinejudge.mapper.SubmissionMapper;
 import lombok.Data;
 import lombok.Getter;
@@ -31,6 +33,9 @@ public class ResultWriter {
     @Autowired
     private SubmissionMapper submissionMapper;
 
+    @Autowired
+    private ProblemMapper problemMapper;
+
     private SaveMode saveMode = SaveMode.DATABASE;
 
     public void write(Submission submission) {
@@ -45,6 +50,12 @@ public class ResultWriter {
                     throw new RuntimeException(e);
                 }
             }
+        }
+        if (!submission.getIsDebug()) { // 增加统计数据
+            Problem problem = problemMapper.selectById(submission.getProblemId());
+            problem.setAttemptNum(problem.getAttemptNum() + 1)
+                    .setSuccessNum(problem.getSuccessNum() + (submission.getIsSuccess() ? 1 : 0));
+            problemMapper.updateById(problem);
         }
     }
 }

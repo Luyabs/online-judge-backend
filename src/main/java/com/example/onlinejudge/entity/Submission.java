@@ -49,6 +49,11 @@ public class Submission {
     private String code;
 
     /**
+     * 代码执行结果 (仅显示最后一个用例)
+     */
+    private String codeResult;
+
+    /**
      * 是否是调试
      */
     private Boolean isDebug;
