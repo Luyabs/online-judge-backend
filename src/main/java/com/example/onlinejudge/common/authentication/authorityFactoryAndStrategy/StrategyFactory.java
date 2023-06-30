@@ -15,12 +15,16 @@ public class StrategyFactory {
     @Autowired
     private UserStrategy userStrategy;
 
+    @Autowired
+    private SubmissionStrategy submissionStrategy;
+
     public AuthorityStrategy factory(String className) {
         className = className.substring(0, className.lastIndexOf("ServiceImpl"));
         return switch (className) {
             case "Problem" -> problemStrategy;
             case "TestCase" -> testCaseStrategy;
             case "User" -> userStrategy;
+            case "Submission" -> submissionStrategy;
             default -> throw new ServiceException("StrategyFactory中方法名" + className + "没有匹配项, 不能检查是否是作者");
         };
     }

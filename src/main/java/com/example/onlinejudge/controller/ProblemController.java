@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.onlinejudge.common.Result;
 import com.example.onlinejudge.common.authentication.UserInfo;
 import com.example.onlinejudge.common.exception.exception.ServiceException;
+import com.example.onlinejudge.constant.ProblemStatus;
 import com.example.onlinejudge.dto.ProblemDto;
 import com.example.onlinejudge.entity.Problem;
 import com.example.onlinejudge.entity.TestCase;
@@ -55,6 +56,9 @@ public class ProblemController {
         if ("undefined".equals(problemId))
             throw new ServiceException("你需要指定problemId");
         Problem problem = problemService.getByIdNotNull(Long.parseLong(problemId));
+        //只能获取审核通过的题目
+        if(problem.getStatus()!= ProblemStatus.VERIFIED.index())
+            throw new ServiceException("problem状态异常，无法访问");
         return Result.success().data("problem", problem);
     }
 

@@ -1,5 +1,8 @@
 package com.example.onlinejudge.constant;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * 题目类型
  */
@@ -9,7 +12,7 @@ public enum ProblemType implements EnumIndex {
     PROGRAM("高级语言程序");
 
     public final String typeName;
-
+    public final List<Integer> difficultyList = Arrays.asList(1,2);
     ProblemType(String typeName) {
         this.typeName = typeName;
     }

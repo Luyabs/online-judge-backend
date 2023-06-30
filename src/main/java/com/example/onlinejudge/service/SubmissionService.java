@@ -1,5 +1,7 @@
 package com.example.onlinejudge.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.example.onlinejudge.dto.StatisticsDto;
 import com.example.onlinejudge.entity.Submission;
 import com.example.onlinejudge.common.base.BaseService;
 import com.example.onlinejudge.vo.SubmissionInputVo;
@@ -15,4 +17,10 @@ import com.example.onlinejudge.vo.SubmissionInputVo;
 public interface SubmissionService extends BaseService<Submission> {
 
     Submission uploadSubmission(SubmissionInputVo submissionInputVo);
+
+    Submission getSubmission(Long submissionId);
+
+    IPage<Submission> getSubmissionPage(int currentPage, int pageSize);
+
+    StatisticsDto getStatistics();
 }

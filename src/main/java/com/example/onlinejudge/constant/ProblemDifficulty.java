@@ -1,5 +1,9 @@
 package com.example.onlinejudge.constant;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * 题目修难度
  */
@@ -10,7 +14,7 @@ public enum ProblemDifficulty implements EnumIndex {
     HARD("困难");
 
     public final String difficulty;
-
+    public final List<Integer> difficultyList = Arrays.asList(1,2,3);
     ProblemDifficulty(String difficulty) {
         this.difficulty = difficulty;
     }
