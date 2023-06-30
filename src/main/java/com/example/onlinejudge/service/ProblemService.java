@@ -21,6 +21,7 @@ public interface ProblemService extends BaseService<Problem> {
 
     IPage<ProblemDto> getPageDto(int currentPage, int pageSize, ProblemQueryConditionVo condition);
 
+    Problem getProblemById(Long problemId);
     IPage<ProblemDto> getPageDtoInAdmin(int currentPage, int pageSize, ProblemQueryConditionVo condition);
 
 
