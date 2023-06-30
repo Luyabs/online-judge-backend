@@ -25,6 +25,7 @@ import com.example.onlinejudge.vo.ProblemQueryConditionVo;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -62,6 +63,16 @@ public class ProblemServiceImpl extends BaseServiceImpl<ProblemMapper, Problem> 
                 .ne("status", ProblemStatus.HISTORY.index())      // 不该查历史记录
                 .orderByAsc("p.problem_id");
         return problemMapper.selectDtoPage(new Page<>(currentPage, pageSize), wrapper);
+    }
+
+    @Override
+    @Cacheable(value = "'problem:'+#problemId")
+    public Problem getProblemById(Long problemId) {
+        Problem problem = getByIdNotNull(problemId);
+        //只能获取审核通过的题目
+        if(problem.getStatus()!= ProblemStatus.VERIFIED.index())
+            throw new ServiceException("problem状态异常，无法访问");
+        return problem;
     }
 
     @Override

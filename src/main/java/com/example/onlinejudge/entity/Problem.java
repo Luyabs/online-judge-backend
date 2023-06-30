@@ -2,6 +2,7 @@ package com.example.onlinejudge.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import lombok.Data;
@@ -20,7 +21,7 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 @TableName("problem")
-public class Problem {
+public class Problem implements Serializable {
 
     /**
      * 题目id

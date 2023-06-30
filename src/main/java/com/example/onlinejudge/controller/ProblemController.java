@@ -55,10 +55,7 @@ public class ProblemController {
     public Result getById(@PathVariable(value = "problemId") String problemId) {
         if ("undefined".equals(problemId))
             throw new ServiceException("你需要指定problemId");
-        Problem problem = problemService.getByIdNotNull(Long.parseLong(problemId));
-        //只能获取审核通过的题目
-        if(problem.getStatus()!= ProblemStatus.VERIFIED.index())
-            throw new ServiceException("problem状态异常，无法访问");
+        Problem problem = problemService.getProblemById(Long.parseLong(problemId));
         return Result.success().data("problem", problem);
     }
 
