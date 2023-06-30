@@ -1,17 +1,88 @@
 package com.example.onlinejudge;
 
+import com.example.onlinejudge.entity.Problem;
+import com.example.onlinejudge.entity.Submission;
+import com.example.onlinejudge.entity.TestCase;
+import com.example.onlinejudge.judgebox.core.judger.JavaJudge;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.BufferedReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.List;
 
 @SpringBootTest
 public class JavaJudgeTest {
+    @Autowired
+    private JavaJudge javaJudge;
+
     @Test
-    void hotCompileTest() {
+    void testPreHandleCode() {
+        Submission submission = new Submission()
+                .setIsDebug(false)
+                .setSubmissionId(1234567890L)
+                .setCode("""
+                        public  class
+                        HelloWorld {
+                            // 编写代码
+                            public static int add(int a, int b, int c) {
+                                return a + b + c;
+                            }
+                            
+                            public static void main(String[] args) {
+                                // get param from args
+                                int a = Integer.parseInt(args[0]);
+                                int b = Integer.parseInt(args[1]);
+                                int c = Integer.parseInt(args[2]);
+                                
+                                
+                                int res = add(a, b, c);
+                                System.out.println(res);
+                            }
+                        }
+                        """);
+        List<TestCase> testCases = List.of(
+                new TestCase().setInput("1\n2\n3").setOutput("6"),
+                new TestCase().setInput("4\n5\n6").setOutput("15"),
+                new TestCase().setInput("7\n8\n9").setOutput("24")
+        );
+        javaJudge.judge(submission, testCases, new Problem());
+        System.out.println(submission);
+    }
+
+    @Test
+    void testPreHandleCode2() {
+        Submission submission = new Submission()
+                .setIsDebug(false)
+                .setSubmissionId(1234567890L)
+                .setCode("""
+                        public  class HelloWorld {
+                            public static String replaceWord(String str) {
+                                return str.replace("a", "@");
+                            }
+                            
+                            public static void main(String[] args) {
+                                // get param from args
+                                String str = args[0];
+                                
+                                String res = replaceWord(str);
+                                System.out.println(res);
+                            }
+                        }
+                        """);
+        List<TestCase> testCases = List.of(
+                new TestCase().setInput("abcdefa").setOutput("@bcdef@"),
+                new TestCase().setInput("abstract").setOutput("@bstr@ct")
+        );
+        javaJudge.judge(submission, testCases, new Problem());
+        System.out.println(submission);
+    }
+
+    @Test
+    void compileTest() {
         String input = "Hello";
         String expectedOutput = "Hello, World!";
 

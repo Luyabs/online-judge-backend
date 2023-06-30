@@ -2,6 +2,7 @@ package com.example.onlinejudge.judgebox.core;
 
 import com.example.onlinejudge.common.exception.exception.ServiceException;
 import com.example.onlinejudge.constant.Language;
+import com.example.onlinejudge.entity.Problem;
 import com.example.onlinejudge.entity.Submission;
 import com.example.onlinejudge.entity.TestCase;
 import com.example.onlinejudge.judgebox.core.judger.JavaJudge;
@@ -36,8 +37,8 @@ public class JudgeCore {
         };
     }
 
-    public Submission judge(Submission submission, List<TestCase> testCases, double runTimeLimit) {
+    public Submission judge(Submission submission, List<TestCase> testCases, Problem problem) {
         Judge languageJudge = judgeFactory(submission);
-        return languageJudge.judge(submission, testCases, runTimeLimit);
+        return languageJudge.judge(submission, testCases, problem);
     }
 }

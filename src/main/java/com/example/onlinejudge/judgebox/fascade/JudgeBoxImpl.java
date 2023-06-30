@@ -37,7 +37,7 @@ public class JudgeBoxImpl implements JudgeBox {
     public Submission judge(Submission submission) {
         Problem problem = caseLoader.preCheckProblem(submission);
         List<TestCase> testCases = caseLoader.loadTestCase(problem);
-        judgeCore.judge(submission, testCases, problem.getRuntimeLimit() == null ? 1024 : problem.getRuntimeLimit());
+        judgeCore.judge(submission, testCases, problem);
         resultWriter.write(submission);
         return submission;
     }

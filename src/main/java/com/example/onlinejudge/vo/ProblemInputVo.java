@@ -33,8 +33,8 @@ public class ProblemInputVo {
     @DecimalMin(value = "256.0")
     private Double runtimeLimit;
 
-    @DecimalMax(value = "128.0")
-    @DecimalMin(value = "0.0")
+    @DecimalMax(value = "4096.0")
+    @DecimalMin(value = "256.0")
     private Double memoryLimit;
 
 }

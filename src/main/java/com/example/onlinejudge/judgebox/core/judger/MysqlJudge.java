@@ -2,6 +2,7 @@ package com.example.onlinejudge.judgebox.core.judger;
 
 import com.example.onlinejudge.common.JdbcTemplateBean;
 import com.example.onlinejudge.common.exception.exception.ServiceException;
+import com.example.onlinejudge.entity.Problem;
 import com.example.onlinejudge.entity.Submission;
 import com.example.onlinejudge.entity.TestCase;
 import org.apache.commons.lang3.StringUtils;
@@ -30,8 +31,10 @@ public class MysqlJudge implements Judge {
      * 外观判断方法，只允许外部类调用此方法
      */
     @Override
-    public Submission judge(Submission submission, List<TestCase> testCases, double runTimeLimit) {
-        String code = submission.getCode().trim().toLowerCase();
+    public Submission judge(Submission submission, List<TestCase> testCases, Problem problemLimitCase) {
+        double runTimeLimit = 1024, memoryLimit = 0;        // 暂时没用上memoryLimit
+        if (problemLimitCase.getRuntimeLimit() != null && problemLimitCase.getRuntimeLimit() >= 1024)
+            runTimeLimit = problemLimitCase.getRuntimeLimit();        String code = submission.getCode().trim().toLowerCase();
         if (code.split(";").length > 1) {
             return setSubmissionErrorType(submission, "在SQL题中你只能提交一句输入");
         }
@@ -203,7 +206,6 @@ public class MysqlJudge implements Judge {
      * 会通过新线程执行一遍最基础的SQL，如果超时则杀死该线程
      */
     private double queryTimeCalculating(String sql, double runTimeLimit) {
-        runTimeLimit = Math.max(runTimeLimit, 512);
         final double[] executeTime = {-1.0};
         final Object lock = new Object();   // 一把用来同步的锁
 

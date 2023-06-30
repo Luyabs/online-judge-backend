@@ -41,7 +41,7 @@ public class JudgeBoxTest {
     void testMysqlJudgeDql() {
         Submission submission = new Submission().setLanguage(Language.MYSQL.index()).setCode("select * from test");
         List<TestCase> testCases = caseLoader.loadTestCase(new Problem().setProblemId(4L).setType(ProblemType.SQL.index()));
-        mysqlJudge.judge(submission, testCases, 1000.0);
+        mysqlJudge.judge(submission, testCases, new Problem());
         System.out.println(submission);
     }
 
@@ -49,7 +49,7 @@ public class JudgeBoxTest {
     void testMysqlJudgeDml() {
         Submission submission = new Submission().setLanguage(Language.MYSQL.index()).setCode("update test set name = '丁真' where id <=3");
         List<TestCase> testCases = caseLoader.loadTestCase(new Problem().setProblemId(5L).setType(ProblemType.SQL.index()));
-        mysqlJudge.judge(submission, testCases, 100.0);
+        mysqlJudge.judge(submission, testCases, new Problem());
         System.out.println(submission);
     }
 
