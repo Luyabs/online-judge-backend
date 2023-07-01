@@ -23,11 +23,11 @@ public class JavaJudgeTest {
     void testPreHandleCode() {
         Submission submission = new Submission()
                 .setIsDebug(false)
-                .setSubmissionId(1234567890L)
+//                .setSubmissionId(1234567890L)
                 .setCode("""
                         public  class
                         HelloWorld {
-                            // 编写代码
+                            // coding
                             public static int add(int a, int b, int c) {
                                 return a + b + c;
                             }
@@ -37,8 +37,6 @@ public class JavaJudgeTest {
                                 int a = Integer.parseInt(args[0]);
                                 int b = Integer.parseInt(args[1]);
                                 int c = Integer.parseInt(args[2]);
-                                
-                                
                                 int res = add(a, b, c);
                                 System.out.println(res);
                             }

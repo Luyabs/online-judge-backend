@@ -7,9 +7,16 @@ import com.example.onlinejudge.entity.TestCase;
 import org.apache.commons.exec.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.DigestUtils;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,13 +35,14 @@ public class JavaJudge implements Judge {
         if (problemLimitCase.getRuntimeLimit() != null && problemLimitCase.getRuntimeLimit() >= 1024)
             runTimeLimit = problemLimitCase.getRuntimeLimit();
         String code = submission.getCode();
-        String codeFileName = "Java" + submission.getSubmissionId();
+        String codeFileName = "Java" + DigestUtils.md5DigestAsHex((new Random().nextInt(1000) + submission.getCode()).getBytes()).substring(0, 15);
         if (code.contains("import") || code.contains("package")) {   // 不允许引入任何包
             ServiceException.throwException("我们已为代码引入了指定的包, 代码中不允许再次出现import与package关键字");
         }
         try {
             code = preHandleCode(code, codeFileName);
             saveCodeToFile(code, codeFileName + ".java");
+
             compileUserCode(codeFileName + ".java");
             int passCaseNum = 0;
             int totalCaseNum = submission.getIsDebug() ? 1 : testCases.size();
@@ -53,9 +61,10 @@ public class JavaJudge implements Judge {
                 setSubmissionErrorType(submission, "Wrong Answer (passed: " + passCaseNum + "/" + totalCaseNum + ")");
             }
         } catch(ServiceException ex){
-                return setSubmissionErrorType(submission, ex.getMessage());
+            removeFile(codeFileName);
+            return setSubmissionErrorType(submission, ex.getMessage());
         } finally {
-            removeFile(codeFileName + ".java");
+            removeFile(codeFileName);
         }
         return submission;
     }
@@ -70,7 +79,7 @@ public class JavaJudge implements Judge {
                 import java.math.*;
                 import java.text.*;
                 import java.lang.*;
-                
+                import java.security.Permission;
                 """
                 + code;
 
@@ -85,6 +94,30 @@ public class JavaJudge implements Judge {
         } else {
             throw new ServiceException("没有公共类 (public class)");
         }
+
+        // 加SecurityManager
+        pattern = "public class "+ codeFileName + "[A-Za-z\\d\s]+\\{";
+        regex = Pattern.compile(pattern);
+        matcher = regex.matcher(code);
+        if (matcher.find()) {
+            String matching = matcher.group();
+            String appendStr =
+                    """
+                    
+                    static {
+                        System.setSecurityManager(new SecurityManager() {
+                            public void checkPermission(Permission perm) {
+                                System.out.println("you cannot use danger system call function");
+                                throw new SecurityException("you cannot use danger system call function");
+                            }
+                        });
+                    }      
+                    """;
+            code = code.replace(matching, matching + appendStr);
+        } else {
+            throw new ServiceException("没有公共类 (public class)");
+        }
+
         return code;
     }
 
@@ -167,8 +200,12 @@ public class JavaJudge implements Judge {
     }
 
     private void removeFile(String codeFileName) {
-        new File(codeFileName + ".java").delete();
-        new File(codeFileName + ".class").delete();
+        try {
+            Files.delete(Path.of(codeFileName + ".class"));
+            Files.delete(Path.of(codeFileName + ".java"));
+        } catch (IOException e) {
+//            throw new RuntimeException(e);
+        }
     }
 
     /**

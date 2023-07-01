@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.File;
 import java.util.List;
 
 import static com.example.onlinejudge.common.exception.exception.ValidateException.NOT_NULL;
@@ -53,4 +54,9 @@ public class NormalTest {
         ValidateException.throwIf(2 < 3, "2<<<<3", UNIQUE);
     }
 
+    @Test
+    void test04() {
+        new File("Java1234567890" + ".java").delete();
+
+    }
 }
