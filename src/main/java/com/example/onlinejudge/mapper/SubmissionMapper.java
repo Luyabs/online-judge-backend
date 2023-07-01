@@ -35,7 +35,7 @@ public interface SubmissionMapper extends BaseMapper<Submission> {
             where p.problem_id in (
                 select distinct p.problem_id from submission s
                     join problem p on p.problem_id = s.problem_id
-                        where s.user_id = 1 and is_success = 1);
+                        where s.user_id = 1 and is_success = 1 and is_debug = 0);
             """)
     HashMap<String,Long> getProNumByDifficulty();
 
@@ -47,7 +47,7 @@ public interface SubmissionMapper extends BaseMapper<Submission> {
             where p.problem_id in (
                 select distinct p.problem_id from submission s
                     join problem p on p.problem_id = s.problem_id
-                        where s.user_id = 1 and is_success = 1);
+                        where s.user_id = 1 and is_success = 1 and is_debug = 0);
             """)
     HashMap<String,Long> getProNumByType();
 }
