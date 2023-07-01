@@ -167,6 +167,8 @@ public class JavaJudge implements Judge {
         executor.setWatchdog(watchdog);
 
         String input = testCase.getInput();
+        if (input == null)
+            throw new ServiceException("用例异常，用例缺少输入");
         String[] separatedInputs = input.split("\n");
 
         CommandLine commandLine = new CommandLine("java")
@@ -201,8 +203,8 @@ public class JavaJudge implements Judge {
 
     private void removeFile(String codeFileName) {
         try {
-            Files.delete(Path.of(codeFileName + ".class"));
             Files.delete(Path.of(codeFileName + ".java"));
+            Files.delete(Path.of(codeFileName + ".class"));
         } catch (IOException e) {
 //            throw new RuntimeException(e);
         }

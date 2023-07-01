@@ -89,16 +89,16 @@ public class UserController {
     }
 
     @ApiOperation(tags = "统计管理",value = "查询用户提交历史", notes = "参数：页索引，页大小")
-    @GetMapping("/submissions")
+    @GetMapping("/submission")
     public Result getSubmissionHistory(@RequestParam(defaultValue = "1") int currentPage, @RequestParam(defaultValue = "10") int pageSize){
         IPage<Submission> page= submissionService.getSubmissionPage(currentPage,pageSize);
         return Result.success().data("page", page);
     }
 
     @ApiOperation(tags = "统计管理",value = "查询用户做题数据", notes = "参数：无")
-    @GetMapping("/statistics")
+    @GetMapping("/statistic")
     public Result getStatistics(){
         StatisticsDto statisticsDto = submissionService.getStatistics();
-        return Result.success().data("statistics", statisticsDto);
+        return Result.success().data("statistic", statisticsDto);
     }
 }
