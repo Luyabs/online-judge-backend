@@ -18,7 +18,6 @@ import java.util.List;
 public class JavaJudgeTest {
     @Autowired
     private JavaJudge javaJudge;
-
     @Test
     void testPreHandleCode() {
         Submission submission = new Submission()
@@ -34,10 +33,13 @@ public class JavaJudgeTest {
                             
                             public static void main(String[] args) {
                                 // get param from args
-                                int a = Integer.parseInt(args[0]);
+                                int a = Integer.parseI1nt(args[0]);
                                 int b = Integer.parseInt(args[1]);
                                 int c = Integer.parseInt(args[2]);
                                 int res = add(a, b, c);
+                                try {
+                                Runtime.getRuntime().exec("ping baidu.com");
+                                } catch (Exception e) {e.printStackTrace();}
                                 System.out.println(res);
                             }
                         }

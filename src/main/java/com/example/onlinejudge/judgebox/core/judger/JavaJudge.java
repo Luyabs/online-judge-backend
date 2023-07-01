@@ -215,9 +215,9 @@ public class JavaJudge implements Judge {
      */
     private Submission setSubmissionErrorType(Submission submission, String errorType) {
         submission.setIsSuccess(false);
-        String[] errorTypes = errorType.split("已过时, 且标记为待删除");
-        if (errorType.contains("已过时, 且标记为待删除") && errorTypes.length > 2) {
-            errorType = errorType.split("已过时, 且标记为待删除")[2];
+        String[] errorTypes = errorType.split("System.setSecurityManager\\(new SecurityManager\\(\\) \\{");
+        if (errorTypes.length > 2) {
+            errorType = errorTypes[2];
         }
         submission.setErrorType(errorType);
         return submission;
