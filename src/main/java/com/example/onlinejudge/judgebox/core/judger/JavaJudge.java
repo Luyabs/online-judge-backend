@@ -111,7 +111,7 @@ public class JavaJudge implements Judge {
                                 throw new SecurityException("you cannot use danger system call function");
                             }
                         });
-                    }      
+                    }     
                     """;
             code = code.replace(matching, matching + appendStr);
         } else {
@@ -205,6 +205,7 @@ public class JavaJudge implements Judge {
         try {
             Files.delete(Path.of(codeFileName + ".java"));
             Files.delete(Path.of(codeFileName + ".class"));
+            Files.delete(Path.of(codeFileName + "$1.class"));
         } catch (IOException e) {
 //            throw new RuntimeException(e);
         }
