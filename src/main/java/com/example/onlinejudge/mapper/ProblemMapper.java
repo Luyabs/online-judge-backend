@@ -28,7 +28,7 @@ public interface ProblemMapper extends BaseMapper<Problem> {
                 p.*,
                 (p.success_num / p.attempt_num) as passRate,
                 IFNULL((select 1 from submission sub
-                           where sub.user_id = s.user_id
+                           where sub.user_id = ${sub_user_id}
                                  and sub.problem_id = p.problem_id
                                  and sub.is_success = 1
                                  and is_debug = 1 limit 1),0) as hasDone,
@@ -38,6 +38,6 @@ public interface ProblemMapper extends BaseMapper<Problem> {
                      join user s on p.user_id = s.user_id
             ${ew.customSqlSegment}
             """)
-    IPage<ProblemDto> selectDtoPage(Page<ProblemDto> objectPage, @Param(Constants.WRAPPER) QueryWrapper<ProblemDto> wrapper);
+    IPage<ProblemDto> selectDtoPage(Page<ProblemDto> objectPage, @Param(Constants.WRAPPER) QueryWrapper<ProblemDto> wrapper,@Param("sub_user_id") long subUserId);
 
 }

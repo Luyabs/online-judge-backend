@@ -54,7 +54,7 @@ public class ProblemServiceImpl extends BaseServiceImpl<ProblemMapper, Problem> 
     @Override
     public IPage<ProblemDto> getPageDto(int currentPage, int pageSize, ProblemQueryConditionVo condition) {
         QueryWrapper<ProblemDto> wrapper = new QueryWrapper<ProblemDto>()
-                .like(ObjectUtils.isNotEmpty(condition.getUserId()), "p.user_id", condition.getUserId())                             // 查询用户
+                .like(ObjectUtils.isNotEmpty(condition.getUserId()), "p.user_id", condition.getUserId())                // 查询用户(题目作者)
                 .like(ObjectUtils.isNotEmpty(condition.getTitle()), "title", condition.getTitle())                      // 查询标题
                 .like(ObjectUtils.isNotEmpty(condition.getContent()), "content", condition.getContent())                // 查询内容
                 .eq(ObjectUtils.isNotEmpty(condition.getType()), "type", condition.getType())                         // 查询类型
@@ -62,7 +62,7 @@ public class ProblemServiceImpl extends BaseServiceImpl<ProblemMapper, Problem> 
                 .eq(ObjectUtils.isNotEmpty(condition.getStatus()), "status", condition.getStatus())      // 查询通过/未通过审核
                 .ne("status", ProblemStatus.HISTORY.index())      // 不该查历史记录
                 .orderByAsc("p.problem_id");
-        return problemMapper.selectDtoPage(new Page<>(currentPage, pageSize), wrapper);
+        return problemMapper.selectDtoPage(new Page<>(currentPage, pageSize), wrapper,UserInfo.getUserId());    //查询用户默认填入当前登录用户
     }
 
     @Override
