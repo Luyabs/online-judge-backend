@@ -33,11 +33,22 @@ public class UserController {
     @Autowired
     private SubmissionService submissionService;
 
+    @Autowired
+    private RedisUtil redisUtil;
     @ApiOperation(tags = "登录注册管理", value = "登录", notes = "传入username和password")
     @PostMapping("/login")
     public Result login(@RequestBody UserLoginVo userLoginVo) {
-        SaTokenInfo token = userService.login(userLoginVo);
-        return Result.success().data("token", token.getTokenValue());
+        SaTokenInfo new_token = userService.login(userLoginVo);
+        if(redisUtil.hasKey("userinfo:login:"+ userLoginVo.getUsername())){
+            String token = (String) redisUtil.get("userinfo:login:"+ userLoginVo.getUsername());
+            redisUtil.del("sa-token:login:"+ token);
+            redisUtil.del("userinfo:login:"+ userLoginVo.getUsername());
+        }
+        //key-value: token(String)-username(String)
+        redisUtil.set("sa-token:login:"+ new_token.tokenValue,userLoginVo.getUsername(),600);
+        //key-value: username(String)-satoken(String)
+        redisUtil.set("userinfo:login:"+ userLoginVo.getUsername(),new_token.tokenValue,600);
+        return Result.success().data("token", new_token.getTokenValue());
     }
 
     @ApiOperation(tags = "登录注册管理", value = "解析token", notes = "需传入token")

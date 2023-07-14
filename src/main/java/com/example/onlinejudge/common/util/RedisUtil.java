@@ -1,21 +1,26 @@
 package com.example.onlinejudge.common.util;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.annotation.Resources;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 @Component
-public final class RedisUtil {
+public class RedisUtil {
 
     @Resource
-    private static RedisTemplate<String, Object> redisTemplate;
+    public  RedisTemplate<String, Object> redisTemplate;
 
-    public Set<String> keys(String keys){
+    public  Set<String> keys(String keys){
         try {
             return redisTemplate.keys(keys);
         }catch (Exception e){
@@ -30,9 +35,9 @@ public final class RedisUtil {
      * @param key 键
      * @return true 存在 false不存在
      */
-    public static boolean hasKey(String key) {
+    public  boolean hasKey(String key) {
         try {
-            return redisTemplate.hasKey(key);
+            return Boolean.TRUE.equals(redisTemplate.hasKey(key));
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -57,6 +62,20 @@ public final class RedisUtil {
     }
 
     /**
+     * 删除缓存
+     * @param key 可以传一个值 或多个
+     */
+    @SuppressWarnings("unchecked")
+    public  void del(String... key) {
+        if (key != null && key.length > 0) {
+            if (key.length == 1) {
+                redisTemplate.delete(key[0]);
+            } else {
+                redisTemplate.delete((Collection<String>) CollectionUtils.arrayToList(key));
+            }
+        }
+    }
+    /**
      * 普通缓存获取
      * @param key 键
      * @return 值
@@ -71,7 +90,7 @@ public final class RedisUtil {
      * @param time 秒为单位 如果time小于等于0 将设置无限期
      * @return
      */
-    public static boolean expire(String key, long time){
+    public boolean expire(String key, long time){
         try{
             if(time > 0){
                 redisTemplate.expire(key,time, TimeUnit.SECONDS);
@@ -193,7 +212,7 @@ public final class RedisUtil {
      * @param values 值 可以是多个
      * @return 成功个数
      */
-    public static long sSetAndTime(String key, long time, Object... values) {
+    public long sSetAndTime(String key, long time, Object... values) {
         try {
             Long count = redisTemplate.opsForSet().add(key, values);
             if (time > 0){

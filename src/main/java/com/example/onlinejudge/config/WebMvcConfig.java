@@ -5,6 +5,7 @@ import cn.dev33.satoken.router.SaHttpMethod;
 import cn.dev33.satoken.router.SaRouter;
 import cn.dev33.satoken.stp.StpUtil;
 import com.example.onlinejudge.common.interceptor.Knife4jInterceptor;
+import com.example.onlinejudge.common.interceptor.LoginInterceptor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
@@ -71,11 +72,17 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
             registry.addInterceptor(new Knife4jInterceptor())
                     .addPathPatterns("/doc.html");
 
-        registry.addInterceptor(new SaInterceptor(
-                handle ->
-                        SaRouter.match("/**")
-                                .notMatch(SaHttpMethod.OPTIONS) // 排除跨域时的OPTIONS请求
-                ))
+//        registry.addInterceptor(new SaInterceptor(
+//                handle ->
+//                        SaRouter.match("/**")
+//                                .notMatch(SaHttpMethod.OPTIONS) // 排除跨域时的OPTIONS请求
+//                ))
+//                .addPathPatterns("/**")
+//                .excludePathPatterns("/user/login", "/user/register", "/user/is_login", "/user/info","/webjars/**")
+//                .excludePathPatterns("/doc.html**", "/swagger-resources", "/v2/api-docs**","/webjars/**");
+
+
+        registry.addInterceptor(new LoginInterceptor())
                 .addPathPatterns("/**")
                 .excludePathPatterns("/user/login", "/user/register", "/user/is_login", "/user/info","/webjars/**")
                 .excludePathPatterns("/doc.html**", "/swagger-resources", "/v2/api-docs**","/webjars/**");

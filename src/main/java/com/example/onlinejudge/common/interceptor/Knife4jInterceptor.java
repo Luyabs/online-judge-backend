@@ -16,4 +16,5 @@ public class Knife4jInterceptor implements HandlerInterceptor {
         response.setStatus(403);        // 拒绝访问
         return false;
     }
+
 }
