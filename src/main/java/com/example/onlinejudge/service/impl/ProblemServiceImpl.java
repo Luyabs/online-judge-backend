@@ -66,7 +66,7 @@ public class ProblemServiceImpl extends BaseServiceImpl<ProblemMapper, Problem> 
     }
 
     @Override
-    @Cacheable(value = "'problem:'+#problemId")
+    @Cacheable(value = "problem:problemId:", key = "#problemId")
     public Problem getProblemById(Long problemId) {
         Problem problem = getByIdNotNull(problemId);
         //只能获取审核通过的题目
