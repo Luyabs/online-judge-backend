@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.onlinejudge.common.Result;
 import com.example.onlinejudge.common.authentication.UserInfo;
 import com.example.onlinejudge.common.exception.exception.ServiceException;
+import com.example.onlinejudge.common.util.RedisUtil;
 import com.example.onlinejudge.constant.ProblemStatus;
 import com.example.onlinejudge.dto.ProblemDto;
 import com.example.onlinejudge.entity.Problem;
@@ -13,6 +14,7 @@ import com.example.onlinejudge.vo.ProblemInputVo;
 import com.example.onlinejudge.vo.ProblemModifyVo;
 import com.example.onlinejudge.vo.ProblemQueryConditionVo;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,12 +28,15 @@ import javax.validation.Valid;
  * @author Luyabs & 2020ljj
  * @since 2023-06-13 11:06:32
  */
+@Slf4j
 @RestController
 @RequestMapping("/problem")
 public class ProblemController {
     @Autowired
     private ProblemService problemService;
 
+    @Autowired
+    private RedisUtil redisUtil;
     @ApiOperation(tags = "题目获取", value = "分页获取",
             notes = "参数: currentPage=当前页, pageSize=页大小, " +
                     "condition=条件查询{userId, title, content, type, difficulty, isVerified}")
@@ -81,7 +86,13 @@ public class ProblemController {
     @PutMapping("/my_upload")
     public Result modifyProblem(@Valid @RequestBody ProblemModifyVo problemModifyVo) {
         Long problemId = problemService.modifyProblem(problemModifyVo);
-        return problemId!=null?Result.success().data("editProblemId", problemId).data("problemModifyVo",problemModifyVo):Result.error();
+        if(problemId!=null){
+            if(redisUtil.hasKey("problem:problemId:" +"::"+ problemModifyVo.getProblemId()))
+                redisUtil.del("problem:problemId:" +"::"+ problemModifyVo.getProblemId());
+            return Result.success().data("editProblemId", problemId).data("problemModifyVo",problemModifyVo);
+        }
+        else
+            return Result.error();
     }
 
     @ApiOperation(tags = "上传管理", value = "删除题目",
@@ -89,7 +100,13 @@ public class ProblemController {
     @DeleteMapping("/my_upload/{problemId}")
     public Result deleteProblem(@PathVariable Long problemId){
         boolean res = problemService.deleteProblem(problemId);
-        return res?Result.success().data("problemId", problemId):Result.error();
+        if(res){
+            if(redisUtil.hasKey("problem:problemId:" + "::"+ problemId))
+                redisUtil.del("problem:problemId:" + "::"+ problemId);
+            return Result.success().data("problemId", problemId);
+        }
+        else
+            return Result.error();
     }
 
     /**

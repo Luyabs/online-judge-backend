@@ -4,6 +4,7 @@ import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.onlinejudge.common.Result;
+import com.example.onlinejudge.common.authentication.UserInfo;
 import com.example.onlinejudge.common.util.RedisUtil;
 import com.example.onlinejudge.dto.StatisticsDto;
 import com.example.onlinejudge.entity.Submission;
@@ -62,6 +63,12 @@ public class UserController {
     @PostMapping("/logout")
     public Result logout() {
         StpUtil.logout();
+        String userName = userService.getById(UserInfo.getUserId()).getUsername();
+        if(redisUtil.hasKey("userinfo:login:"+ userName)){
+            String token = (String) redisUtil.get("userinfo:login:"+ userName);
+            redisUtil.del("sa-token:login:"+ token);
+            redisUtil.del("userinfo:login:"+ userName);
+        }
         return Result.success().message("登出成功");
     }
 
@@ -75,7 +82,10 @@ public class UserController {
     @ApiOperation(tags = "登录注册管理", value = "是否登录")
     @GetMapping("/is_login")
     public Result isLogin() {
-        return StpUtil.isLogin() ? Result.success().data("id", StpUtil.getLoginId()) : Result.error().message("未登录");
+        String userName = userService.getById(UserInfo.getUserId()).getUsername();
+
+        return redisUtil.hasKey("userinfo:login:"+ userName) && StpUtil.isLogin() ?
+                Result.success().data("id", StpUtil.getLoginId()) : Result.error().message("未登录");
     }
 
     @ApiOperation(tags = "用户信息管理", value = "分页获取",

@@ -10,6 +10,7 @@ import com.example.onlinejudge.common.base.BaseServiceImpl;
 import com.example.onlinejudge.common.exception.exception.NoAccessException;
 import com.example.onlinejudge.common.exception.exception.NotExistException;
 import com.example.onlinejudge.common.exception.exception.ServiceException;
+import com.example.onlinejudge.common.util.RedisUtil;
 import com.example.onlinejudge.constant.Role;
 import com.example.onlinejudge.entity.User;
 import com.example.onlinejudge.mapper.UserMapper;
@@ -36,6 +37,8 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private RedisUtil redisUtil;
     /**
      * 用户登录
      * @param userLoginVo 登录VO {username, password}
@@ -102,6 +105,14 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
         User user = getByIdNotNull(userId);
         ServiceException.throwIf(user.getRole() == Role.ADMIN.index(), "你不能封禁管理员");
         user.setIsBanned(!user.getIsBanned());  // 反转封禁状态
+
+        String userName = user.getUsername();
+        if(user.getIsBanned() && redisUtil.hasKey("userinfo:login:"+ userName)){
+            String token = (String) redisUtil.get("userinfo:login:"+ userName);
+            redisUtil.del("sa-token:login:"+ token);
+            redisUtil.del("userinfo:login:"+ userName);
+        }
+
         return userMapper.updateById(user) == 1;
     }
 }
