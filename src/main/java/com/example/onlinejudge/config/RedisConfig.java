@@ -34,9 +34,6 @@ import java.util.Map;
  * <p>
  * Redis配置类
  * </P>
- *
- * @author Kk
- * @since 2022/3/9 22:54
  */
 @Slf4j
 @Configuration

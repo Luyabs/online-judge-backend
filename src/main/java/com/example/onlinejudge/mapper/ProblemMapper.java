@@ -12,6 +12,8 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.List;
+
 /**
  * <p>
  *  Mapper 接口
@@ -40,4 +42,8 @@ public interface ProblemMapper extends BaseMapper<Problem> {
             """)
     IPage<ProblemDto> selectDtoPage(Page<ProblemDto> objectPage, @Param(Constants.WRAPPER) QueryWrapper<ProblemDto> wrapper,@Param("sub_user_id") long subUserId);
 
+    @Select("""
+            select problem_id from problem;
+            """)
+    List<Long> getAllProblemId();
 }

@@ -7,6 +7,7 @@ import com.example.onlinejudge.common.aop.annotation.Authority;
 import com.example.onlinejudge.common.authentication.UserInfo;
 import com.example.onlinejudge.common.exception.exception.ServiceException;
 import com.example.onlinejudge.common.base.BaseServiceImpl;
+import com.example.onlinejudge.common.util.BloomFilter;
 import com.example.onlinejudge.constant.EditAction;
 import com.example.onlinejudge.constant.EditStatus;
 import com.example.onlinejudge.constant.ProblemStatus;
@@ -23,11 +24,16 @@ import com.example.onlinejudge.vo.ProblemInputVo;
 import com.example.onlinejudge.vo.ProblemModifyVo;
 import com.example.onlinejudge.vo.ProblemQueryConditionVo;
 import org.apache.commons.lang3.ObjectUtils;
+import org.redisson.api.RBloomFilter;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.PostConstruct;
+import java.util.List;
 
 /**
  * <p>
@@ -51,6 +57,21 @@ public class ProblemServiceImpl extends BaseServiceImpl<ProblemMapper, Problem> 
     @Autowired
     private TestCaseMapper testCaseMapper;
 
+    @Autowired
+    private BloomFilter bloomFilter;
+
+    String bloomFilterName = "problem_bloomFilter";
+    //初始化布隆过滤器
+    @PostConstruct
+    private void initBloomFilter(){
+        bloomFilter.bloomFilterInit(bloomFilterName);
+        List<Long> allProblemId = problemMapper.getAllProblemId();
+        allProblemId.parallelStream().forEach(item->{
+            // 全部题目Id
+            bloomFilter.bloomFilterAdd(bloomFilterName, String.valueOf(item));
+        });
+    }
+
     @Override
     public IPage<ProblemDto> getPageDto(int currentPage, int pageSize, ProblemQueryConditionVo condition) {
         QueryWrapper<ProblemDto> wrapper = new QueryWrapper<ProblemDto>()
@@ -68,6 +89,9 @@ public class ProblemServiceImpl extends BaseServiceImpl<ProblemMapper, Problem> 
     @Override
     @Cacheable(value = "problem:problemId:", key = "#problemId")
     public Problem getProblemById(Long problemId) {
+        boolean flag = bloomFilter.bloomFilterContains(bloomFilterName, String.valueOf(problemId));
+        if(!flag)
+            throw new ServiceException("problem不存在");
         Problem problem = getByIdNotNull(problemId);
         //只能获取审核通过的题目
         if(problem.getStatus()!= ProblemStatus.VERIFIED.index())
@@ -98,6 +122,8 @@ public class ProblemServiceImpl extends BaseServiceImpl<ProblemMapper, Problem> 
             newEditRecord.setStatus(EditStatus.VERIFIED.index());
         }
         if(problemMapper.insert(newProblem) == 1){
+            //加入布隆过滤器中
+            bloomFilter.bloomFilterAdd(bloomFilterName,String.valueOf(newProblem.getProblemId()));
             newEditRecord.setOriginalProblemId(newProblem.getProblemId());
             return  editRecordMapper.insert(newEditRecord) == 1;
         }
@@ -133,6 +159,8 @@ public class ProblemServiceImpl extends BaseServiceImpl<ProblemMapper, Problem> 
         //修改旧数据状态同时插入新数据
         if(problemMapper.updateById(originalProblem) == 1&&problemMapper.insert(editProblem) == 1){
             newEditRecord.setEditProblemId(editProblem.getProblemId());
+            //加入布隆过滤器中
+            bloomFilter.bloomFilterAdd(bloomFilterName,String.valueOf(editProblem.getProblemId()));
             //插入修改记录
             if(editRecordService.save(newEditRecord))
                 return editProblem.getProblemId();
