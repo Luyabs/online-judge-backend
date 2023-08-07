@@ -34,6 +34,7 @@ public class SubmissionServiceImpl extends BaseServiceImpl<SubmissionMapper, Sub
 
     @Override
     public Submission uploadSubmission(SubmissionInputVo submissionInputVo) {
+        //防重复提交
         Submission submission = new Submission().setUserId(UserInfo.getUserId());
         BeanUtils.copyProperties(submissionInputVo, submission);
         return judgeBox.judge(submission);

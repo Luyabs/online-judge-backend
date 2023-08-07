@@ -80,6 +80,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
      */
     @Override
     public boolean register(UserRegisterVo userRegisterVo) {
+        //防止重复提交
         User user = new User().setRole(Role.NORMAL_USER.index());
         BeanUtils.copyProperties(userRegisterVo, user);
         if (user.getPassword().length() < 6)

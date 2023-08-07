@@ -8,6 +8,7 @@ import com.example.onlinejudge.common.authentication.UserInfo;
 import com.example.onlinejudge.common.exception.exception.ServiceException;
 import com.example.onlinejudge.common.base.BaseServiceImpl;
 import com.example.onlinejudge.common.util.BloomFilter;
+import com.example.onlinejudge.common.util.RedisUtil;
 import com.example.onlinejudge.constant.EditAction;
 import com.example.onlinejudge.constant.EditStatus;
 import com.example.onlinejudge.constant.ProblemStatus;
@@ -57,6 +58,8 @@ public class ProblemServiceImpl extends BaseServiceImpl<ProblemMapper, Problem> 
     @Autowired
     private TestCaseMapper testCaseMapper;
 
+    @Autowired
+    private RedisUtil redisUtil;
     @Autowired
     private BloomFilter bloomFilter;
 
@@ -108,6 +111,7 @@ public class ProblemServiceImpl extends BaseServiceImpl<ProblemMapper, Problem> 
     @Override
     @Transactional
     public boolean uploadProblem(ProblemInputVo problemInputVo) {
+        //防止重复提交
         Problem newProblem = new Problem().
                 setUserId(UserInfo.getUserId()).
                 setStatus(ProblemStatus.VERIFYING.index());
@@ -135,6 +139,7 @@ public class ProblemServiceImpl extends BaseServiceImpl<ProblemMapper, Problem> 
     @Authority(author = true, admin = true)
     @Transactional
     public Long modifyProblem(ProblemModifyVo problemModifyVo) {
+        //加锁 - 同时间只能一个用户/管理员修改
         Problem originalProblem = this.getByIdNotNull(problemModifyVo.getProblemId());
         int status = originalProblem.getStatus();
         if(status == ProblemStatus.VERIFYING.index()||status == ProblemStatus.HISTORY.index())
@@ -172,6 +177,7 @@ public class ProblemServiceImpl extends BaseServiceImpl<ProblemMapper, Problem> 
     @Authority(author = true, admin = true)
     @Transactional
     public boolean deleteProblem(Long problemId) {
+        //加锁，以免
         EditRecord newEditRecord = new EditRecord().
                 setUserId(UserInfo.getUserId()).
                 setOriginalProblemId(problemId).
@@ -196,6 +202,7 @@ public class ProblemServiceImpl extends BaseServiceImpl<ProblemMapper, Problem> 
     @Authority(author = false, admin = true)
     @Transactional
     public boolean auditProblem(Long editRecordId,Boolean auditResult ,String verifyMessage) {
+        // 加锁
         EditRecord editRecord = editRecordService.getByIdNotNull(editRecordId);
         Problem newProblem = getByIdNotNull(editRecord.getOriginalProblemId());
 
@@ -219,7 +226,6 @@ public class ProblemServiceImpl extends BaseServiceImpl<ProblemMapper, Problem> 
             editRecord.setStatus(EditStatus.FAILED.index());
             newProblem.setStatus(ProblemStatus.FAILED.index());
         }
-
         return res && editRecordMapper.updateById(editRecord) == 1
                 && problemMapper.updateById(newProblem) == 1;
 

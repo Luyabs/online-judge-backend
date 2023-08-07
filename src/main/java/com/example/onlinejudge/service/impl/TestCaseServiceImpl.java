@@ -51,6 +51,7 @@ public class TestCaseServiceImpl extends BaseServiceImpl<TestCaseMapper, TestCas
     @Override
     @Transactional
     public boolean uploadTestCase(TestCaseInputVo testCaseInputVo) {
+        //防止重复提交
         Problem problem = problemMapper.selectById(testCaseInputVo.getProblemId());
         if(null == problem)
             NotExistException.throwException(testCaseInputVo.getProblemId(), "题目");
