@@ -26,6 +26,7 @@ import com.example.onlinejudge.vo.ProblemModifyVo;
 import com.example.onlinejudge.vo.ProblemQueryConditionVo;
 import org.apache.commons.lang3.ObjectUtils;
 import org.redisson.api.RBloomFilter;
+import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -60,6 +62,9 @@ public class ProblemServiceImpl extends BaseServiceImpl<ProblemMapper, Problem> 
 
     @Autowired
     private RedisUtil redisUtil;
+
+    @Autowired
+    private RedissonClient redisson;
     @Autowired
     private BloomFilter bloomFilter;
 
@@ -202,32 +207,40 @@ public class ProblemServiceImpl extends BaseServiceImpl<ProblemMapper, Problem> 
     @Authority(author = false, admin = true)
     @Transactional
     public boolean auditProblem(Long editRecordId,Boolean auditResult ,String verifyMessage) {
-        // 加锁
+
         EditRecord editRecord = editRecordService.getByIdNotNull(editRecordId);
-        Problem newProblem = getByIdNotNull(editRecord.getOriginalProblemId());
+        // 对editRecord加锁
+        RLock lock = redisson.getLock("lock_editRecord::" + editRecordId);
+        lock.lock(10, TimeUnit.SECONDS);
+        try{
+            Problem newProblem = getByIdNotNull(editRecord.getOriginalProblemId());
+            //判断修改记录状态是否为“审核中”
+            if(editRecord.getStatus() != 1)
+                ServiceException.throwException("修改记录状态不为‘审核中’");
+            editRecord.setVerifyMessage(verifyMessage);
 
-        //判断修改记录状态是否为“审核中”
-        if(editRecord.getStatus() != 1)
-            ServiceException.throwException("修改记录状态不为‘审核中’");
-        editRecord.setVerifyMessage(verifyMessage);
+            //判断题目状态是否为“审核中”
+            Integer editAction = editRecord.getChangeAction();
+            boolean res = true;
+            if(newProblem.getStatus() != ProblemStatus.VERIFYING.index())
+                ServiceException.throwException("题目状态不为‘审核中’");
+            if(auditResult){
+                if(editAction == EditAction.DELETE.index())                             //删除数据
+                    res = problemMapper.deleteById(newProblem) == 1;
+                editRecord.setStatus(EditStatus.VERIFIED.index());
+                newProblem.setStatus(ProblemStatus.VERIFIED.index());
+            }
+            else{
+                editRecord.setStatus(EditStatus.FAILED.index());
+                newProblem.setStatus(ProblemStatus.FAILED.index());
+            }
+            return res && editRecordMapper.updateById(editRecord) == 1
+                    && problemMapper.updateById(newProblem) == 1;
+        } finally {
+            lock.unlock();
+            log.error("删除锁" + "lock_editRecord::" + editRecordId);
+        }
 
-        //判断题目状态是否为“审核中”
-        Integer editAction = editRecord.getChangeAction();
-        boolean res = true;
-        if(newProblem.getStatus() != ProblemStatus.VERIFYING.index())
-            ServiceException.throwException("题目状态不为‘审核中’");
-        if(auditResult){
-            if(editAction == EditAction.DELETE.index())                             //删除数据
-                res = problemMapper.deleteById(newProblem) == 1;
-            editRecord.setStatus(EditStatus.VERIFIED.index());
-            newProblem.setStatus(ProblemStatus.VERIFIED.index());
-        }
-        else{
-            editRecord.setStatus(EditStatus.FAILED.index());
-            newProblem.setStatus(ProblemStatus.FAILED.index());
-        }
-        return res && editRecordMapper.updateById(editRecord) == 1
-                && problemMapper.updateById(newProblem) == 1;
 
     }
 

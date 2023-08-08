@@ -82,7 +82,7 @@ public class Problem implements Serializable {
     /**
      * 题目信息更新时间
      */
-
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateTime;
     /**
      * 题目新增时间
@@ -92,5 +92,6 @@ public class Problem implements Serializable {
 //    @JsonSerialize(using = LocalDateTimeSerializer.class) // Jackson序列化
 //    @JsonDeserialize(using = LocalDateTimeDeserializer.class) // Jackson反序列化
 //    @TableField(fill = FieldFill.INSERT)
+    @TableField(fill = FieldFill.INSERT)
     private LocalDateTime insertTime;
 }
