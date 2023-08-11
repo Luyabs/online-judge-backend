@@ -61,9 +61,6 @@ public class ProblemServiceImpl extends BaseServiceImpl<ProblemMapper, Problem> 
     private TestCaseMapper testCaseMapper;
 
     @Autowired
-    private RedisUtil redisUtil;
-
-    @Autowired
     private RedissonClient redisson;
     @Autowired
     private BloomFilter bloomFilter;
@@ -137,52 +134,56 @@ public class ProblemServiceImpl extends BaseServiceImpl<ProblemMapper, Problem> 
             return  editRecordMapper.insert(newEditRecord) == 1;
         }
         return false;
-
     }
 
     @Override
     @Authority(author = true, admin = true)
     @Transactional
     public Long modifyProblem(ProblemModifyVo problemModifyVo) {
-        //加锁 - 同时间只能一个用户/管理员修改
         Problem originalProblem = this.getByIdNotNull(problemModifyVo.getProblemId());
-        int status = originalProblem.getStatus();
-        if(status == ProblemStatus.VERIFYING.index()||status == ProblemStatus.HISTORY.index())
-            ServiceException.throwException("该状态（审核中/历史）下题目无法修改");
-        Problem editProblem = new Problem();
-        BeanUtils.copyProperties(originalProblem,editProblem);                          //复制为临时
-        editProblem.setProblemId(null).setStatus(ProblemStatus.HISTORY.index());        //旧数据设为“历史”状态
-
-        BeanUtils.copyProperties(problemModifyVo,originalProblem);       //修改原id下数据为新数据
-        originalProblem.setStatus(ProblemStatus.VERIFYING.index());      //新数据设为“审核中”状态
-
-        EditRecord newEditRecord = new EditRecord().
-                setUserId(UserInfo.getUserId()).
-                setOriginalProblemId(originalProblem.getProblemId()).
-                setChangeAction(EditAction.UPDATE.index()).
-                setIsAdmin(UserInfo.isAdmin()).
-                setStatus(EditStatus.WAIT.index());
-        if(UserInfo.isAdmin()){
-            originalProblem.setStatus(ProblemStatus.VERIFIED.index());
-            newEditRecord.setStatus(EditStatus.VERIFIED.index());
+        RLock lock = redisson.getLock("lock_problem::" + originalProblem);
+        lock.lock(10, TimeUnit.SECONDS);
+        try{
+            //加锁 - 同时间只能一个用户/管理员修改
+            int status = originalProblem.getStatus();
+            if(status == ProblemStatus.VERIFYING.index()||status == ProblemStatus.HISTORY.index())
+                ServiceException.throwException("该状态（审核中/历史）下题目无法修改");
+            Problem editProblem = new Problem();
+            BeanUtils.copyProperties(originalProblem,editProblem);                          //复制为临时
+            editProblem.setProblemId(null).setStatus(ProblemStatus.HISTORY.index());        //旧数据设为“历史”状态
+            BeanUtils.copyProperties(problemModifyVo,originalProblem);       //修改原id下数据为新数据
+            originalProblem.setStatus(ProblemStatus.VERIFYING.index());      //新数据设为“审核中”状态
+            EditRecord newEditRecord = new EditRecord().
+                    setUserId(UserInfo.getUserId()).
+                    setOriginalProblemId(originalProblem.getProblemId()).
+                    setChangeAction(EditAction.UPDATE.index()).
+                    setIsAdmin(UserInfo.isAdmin()).
+                    setStatus(EditStatus.WAIT.index());
+            if(UserInfo.isAdmin()){
+                originalProblem.setStatus(ProblemStatus.VERIFIED.index());
+                newEditRecord.setStatus(EditStatus.VERIFIED.index());
+            }
+            //修改旧数据状态同时插入新数据
+            if(problemMapper.updateById(originalProblem) == 1&&problemMapper.insert(editProblem) == 1){
+                newEditRecord.setEditProblemId(editProblem.getProblemId());
+                //加入布隆过滤器中
+                bloomFilter.bloomFilterAdd(bloomFilterName,String.valueOf(editProblem.getProblemId()));
+                //插入修改记录
+                if(editRecordService.save(newEditRecord))
+                    return editProblem.getProblemId();
+            }
+            return null;
+        } finally {
+            lock.unlock();
+            log.error("删除锁" + "lock_problem::" + originalProblem);
         }
-        //修改旧数据状态同时插入新数据
-        if(problemMapper.updateById(originalProblem) == 1&&problemMapper.insert(editProblem) == 1){
-            newEditRecord.setEditProblemId(editProblem.getProblemId());
-            //加入布隆过滤器中
-            bloomFilter.bloomFilterAdd(bloomFilterName,String.valueOf(editProblem.getProblemId()));
-            //插入修改记录
-            if(editRecordService.save(newEditRecord))
-                return editProblem.getProblemId();
-        }
-        return null;
+
     }
 
     @Override
     @Authority(author = true, admin = true)
     @Transactional
     public boolean deleteProblem(Long problemId) {
-        //加锁，以免
         EditRecord newEditRecord = new EditRecord().
                 setUserId(UserInfo.getUserId()).
                 setOriginalProblemId(problemId).
