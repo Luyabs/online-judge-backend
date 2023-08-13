@@ -1,11 +1,7 @@
 package com.example.onlinejudge.config;
 
-import cn.dev33.satoken.interceptor.SaInterceptor;
-import cn.dev33.satoken.router.SaHttpMethod;
-import cn.dev33.satoken.router.SaRouter;
-import cn.dev33.satoken.stp.StpUtil;
-import com.example.onlinejudge.common.interceptor.Knife4jInterceptor;
-import com.example.onlinejudge.common.interceptor.LoginInterceptor;
+import com.example.onlinejudge.config.interceptor.Knife4jInterceptor;
+import com.example.onlinejudge.config.interceptor.LoginInterceptor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;

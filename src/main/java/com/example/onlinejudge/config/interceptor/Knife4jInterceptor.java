@@ -1,4 +1,4 @@
-package com.example.onlinejudge.common.interceptor;
+package com.example.onlinejudge.config.interceptor;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
