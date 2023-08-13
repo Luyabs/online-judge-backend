@@ -11,7 +11,7 @@ spring:
       url: jdbc:mysql://你的MYSQL IP地址/用到的数据库名
       username: 用户名
       password: 密码
-    secondary:
+    secondary: # 用于OJ 不得和primary使用同一张表
       url: jdbc:mysql://你的MYSQL IP地址/用到的数据库名 
       username: 用户名(你需要确保这个用户只有这个数据库的管理权限)
       password: 密码
