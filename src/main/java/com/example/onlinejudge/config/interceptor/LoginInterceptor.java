@@ -1,7 +1,5 @@
-package com.example.onlinejudge.common.interceptor;
+package com.example.onlinejudge.config.interceptor;
 
-import cn.dev33.satoken.SaManager;
-import cn.dev33.satoken.dao.SaTokenDao;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.json.JSONUtil;
 import com.example.onlinejudge.common.Result;
@@ -26,6 +24,10 @@ public class LoginInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        if (request.getMethod().equals("OPTIONS")) {
+            response.setStatus(HttpServletResponse.SC_OK);
+            return true;
+        }
         response.setHeader("Access-Control-Allow-Origin", (request).getHeader("Origin"));
         response.setHeader("Access-Control-Allow-Credentials", "true");
         response.setCharacterEncoding("UTF-8");
@@ -42,14 +44,14 @@ public class LoginInterceptor implements HandlerInterceptor {
         }
         //token不存在或不在redis中时返回错误信息
         if(StringUtils.isEmpty(token)|| !redisUtil.hasKey("sa-token:login:"+ token)){
-            response.getWriter().write(JSONUtil.toJsonStr(Result.error().message("用户未登录，请进行登录")));
+            response.getWriter().write(JSONUtil.toJsonStr(Result.error().message("用户未登录，请进行登录").code(50008)));
             return false;
         }
         else if(redisUtil.hasKey("sa-token:login:"+ token)){
             //更新键值对存活时间
             String username = (String) redisUtil.get("sa-token:login:"+ token);
             redisUtil.expire("sa-token:login:"+ token,600);
-            redisUtil.expire("userinfo:login:"+ username,600);
+            redisUtil.expire("userinfo:login:"+ username,6000);
         }
         return true;
     }
