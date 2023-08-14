@@ -3,6 +3,8 @@ package com.example.onlinejudge.common.util;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
+import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -395,6 +397,9 @@ public class RedisUtil {
             e.printStackTrace();
             return 0;
         }
+    }
+    public Object execute(DefaultRedisScript<Object> script , List<String> keys , Object...objects){
+        return redisTemplate.execute(script,keys,objects);
     }
 }
 
