@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.onlinejudge.common.aop.annotation.Authority;
+import com.example.onlinejudge.common.aop.annotation.AvoidRepeatableCommit;
 import com.example.onlinejudge.common.authentication.UserInfo;
 import com.example.onlinejudge.dto.StatisticsDto;
 import com.example.onlinejudge.entity.Submission;
@@ -33,6 +34,7 @@ public class SubmissionServiceImpl extends BaseServiceImpl<SubmissionMapper, Sub
     private SubmissionMapper submissionMapper;
 
     @Override
+    @AvoidRepeatableCommit
     public Submission uploadSubmission(SubmissionInputVo submissionInputVo) {
         //防重复提交
         Submission submission = new Submission().setUserId(UserInfo.getUserId());

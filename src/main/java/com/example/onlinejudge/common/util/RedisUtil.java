@@ -398,7 +398,7 @@ public class RedisUtil {
             return 0;
         }
     }
-    public Object execute(DefaultRedisScript<Object> script , List<String> keys , Object...objects){
+    public Object execute(DefaultRedisScript<Long> script , List<String> keys , Object...objects){
         return redisTemplate.execute(script,keys,objects);
     }
 }

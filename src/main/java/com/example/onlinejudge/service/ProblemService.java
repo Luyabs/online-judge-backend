@@ -23,7 +23,7 @@ public interface ProblemService extends BaseService<Problem> {
 
     Problem getProblemById(Long problemId);
     IPage<ProblemDto> getPageDtoInAdmin(int currentPage, int pageSize, ProblemQueryConditionVo condition);
-
+    Problem getProblemByIdInAdmin(Long problemId);
 
     boolean uploadProblem(ProblemInputVo problemInputVo);
 

@@ -55,12 +55,20 @@ public class ProblemController {
         return Result.success().data("page", page);
     }
 
-    @ApiOperation(tags = "题目获取", value = "按problemId获取", notes = "参数: problemId=路径变量")
+    @ApiOperation(tags = "题目获取", value = "按problemId获取（审核通过的题目）", notes = "参数: problemId=路径变量")
     @GetMapping("/{problemId}")
     public Result getById(@PathVariable(value = "problemId") String problemId) {
         if ("undefined".equals(problemId))
             throw new ServiceException("你需要指定problemId");
         Problem problem = problemService.getProblemById(Long.parseLong(problemId));
+        return Result.success().data("problem", problem);
+    }
+    @ApiOperation(tags = "题目获取", value = "按problemId获取（任意状态的题目）", notes = "参数: problemId=路径变量")
+    @GetMapping("/admin/{problemId}")
+    public Result getByIdInAdmin(@PathVariable(value = "problemId") String problemId) {
+        if ("undefined".equals(problemId))
+            throw new ServiceException("你需要指定problemId");
+        Problem problem = problemService.getProblemByIdInAdmin(Long.parseLong(problemId));
         return Result.success().data("problem", problem);
     }
 

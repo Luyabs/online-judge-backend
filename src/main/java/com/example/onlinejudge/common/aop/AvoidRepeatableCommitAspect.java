@@ -39,7 +39,6 @@ public class AvoidRepeatableCommitAspect {
         Method method = signature.getMethod();
         String className = joinPoint.getTarget().getClass().getSimpleName();
         String userId = String.valueOf(UserInfo.getUserId());
-        String key = className +"::"+ userId;
         AvoidRepeatableCommit avoidRepeatableCommit =  method.getAnnotation(AvoidRepeatableCommit.class);
         long timeout = avoidRepeatableCommit.timeout();
         //使用lua脚本的方式
@@ -49,16 +48,10 @@ public class AvoidRepeatableCommitAspect {
         //设置lua脚本文件路径
         redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("lua/redisLock.lua")));
         List<String> keys = new ArrayList<>();
-        keys.add(className +"::"+ userId);
-        //Long resCode = (Long) redisUtil.execute(redisScript,keys,);
-
-
-
-        if(redisUtil.hasKey(key)){
-            NoAccessException.throwException("重复提交");
-        }else {
-            redisUtil.set(key, (Object) "uuid", timeout);
-        }
+        keys.add(className +"::"+ method.getName() +"::"+ userId);
+        Long resCode = (Long) redisUtil.execute(redisScript,keys,timeout,timeout);
+        if(resCode == 0)
+            NoAccessException.throwException("短时间内提交次数过多");
     }
 
 }

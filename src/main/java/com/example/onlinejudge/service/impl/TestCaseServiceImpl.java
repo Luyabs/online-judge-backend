@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.onlinejudge.common.aop.annotation.Authority;
+import com.example.onlinejudge.common.aop.annotation.AvoidRepeatableCommit;
 import com.example.onlinejudge.common.authentication.UserInfo;
 import com.example.onlinejudge.common.exception.exception.NotExistException;
 import com.example.onlinejudge.common.exception.exception.ServiceException;
@@ -49,6 +50,7 @@ public class TestCaseServiceImpl extends BaseServiceImpl<TestCaseMapper, TestCas
     private EditRecordMapper editRecordMapper;
 
     @Override
+    @AvoidRepeatableCommit
     @Transactional
     public boolean uploadTestCase(TestCaseInputVo testCaseInputVo) {
         //防止重复提交

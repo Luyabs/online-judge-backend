@@ -46,9 +46,9 @@ public class UserController {
             redisUtil.del("userinfo:login:"+ userLoginVo.getUsername());
         }
         //key-value: token(String)-username(String)
-        redisUtil.set("sa-token:login:"+ new_token.tokenValue,userLoginVo.getUsername(),6000);
+        redisUtil.set("sa-token:login:"+ new_token.tokenValue,userLoginVo.getUsername(),3600);
         //key-value: username(String)-satoken(String)
-        redisUtil.set("userinfo:login:"+ userLoginVo.getUsername(),new_token.tokenValue,6000);
+        redisUtil.set("userinfo:login:"+ userLoginVo.getUsername(),new_token.tokenValue,3600);
         return Result.success().data("token", new_token.getTokenValue());
     }
 

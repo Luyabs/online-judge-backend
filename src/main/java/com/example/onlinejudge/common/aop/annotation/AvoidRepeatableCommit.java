@@ -6,5 +6,5 @@ import java.lang.annotation.*;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 public @interface  AvoidRepeatableCommit {
-    long timeout()  default 30000 ;
+    long timeout()  default 3 ;
 }

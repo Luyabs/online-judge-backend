@@ -50,8 +50,8 @@ public class LoginInterceptor implements HandlerInterceptor {
         else if(redisUtil.hasKey("sa-token:login:"+ token)){
             //更新键值对存活时间
             String username = (String) redisUtil.get("sa-token:login:"+ token);
-            redisUtil.expire("sa-token:login:"+ token,600);
-            redisUtil.expire("userinfo:login:"+ username,6000);
+            redisUtil.expire("sa-token:login:"+ token,3600);
+            redisUtil.expire("userinfo:login:"+ username,3600);
         }
         return true;
     }

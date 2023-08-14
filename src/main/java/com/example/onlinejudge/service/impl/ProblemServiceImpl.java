@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.onlinejudge.common.aop.annotation.Authority;
+import com.example.onlinejudge.common.aop.annotation.AvoidRepeatableCommit;
 import com.example.onlinejudge.common.authentication.UserInfo;
 import com.example.onlinejudge.common.exception.exception.ServiceException;
 import com.example.onlinejudge.common.base.BaseServiceImpl;
@@ -111,6 +112,13 @@ public class ProblemServiceImpl extends BaseServiceImpl<ProblemMapper, Problem> 
     }
 
     @Override
+    @Authority(author = false, admin = true)
+    public Problem getProblemByIdInAdmin(Long problemId) {
+        return getByIdNotNull(problemId);
+    }
+
+    @Override
+    @AvoidRepeatableCommit
     @Transactional
     public boolean uploadProblem(ProblemInputVo problemInputVo) {
         //防止重复提交
