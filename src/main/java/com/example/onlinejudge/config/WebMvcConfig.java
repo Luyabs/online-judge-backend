@@ -80,7 +80,7 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
 
         registry.addInterceptor(new LoginInterceptor())
                 .addPathPatterns("/**")
-                .excludePathPatterns("/user/login", "/user/register", "/user/is_login", "/user/info","/webjars/**")
+                .excludePathPatterns("/user/login", "/user/register", "/user/logout", "/user/is_login", "/user/info","/webjars/**")
                 .excludePathPatterns("/doc.html**", "/swagger-resources", "/v2/api-docs**","/webjars/**");
     }
 
